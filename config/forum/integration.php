@@ -11,13 +11,12 @@ return [
     | extend the provided classes and use your own instead.
     |
     */
-
-    'policies' => [
-        'forum' => TeamTeaTime\Forum\Policies\ForumPolicy::class,
+      'policies' => [
+        'forum' => App\Policies\ForumPolicy::class,
         'model' => [
-            TeamTeaTime\Forum\Models\Category::class => TeamTeaTime\Forum\Policies\CategoryPolicy::class,
-            TeamTeaTime\Forum\Models\Thread::class => TeamTeaTime\Forum\Policies\ThreadPolicy::class,
-            TeamTeaTime\Forum\Models\Post::class => TeamTeaTime\Forum\Policies\PostPolicy::class,
+            TeamTeaTime\Forum\Models\Category::class => App\Policies\CategoryPolicy::class,
+            TeamTeaTime\Forum\Models\Thread::class => App\Policies\ThreadPolicy::class,
+            TeamTeaTime\Forum\Models\Post::class => App\Policies\PostPolicy::class,
         ],
     ],
 

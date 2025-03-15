@@ -4,6 +4,9 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
+    @can('createCategories')
+    <button class="btn btn-primary">Tạo danh mục</button>
+    @endcan
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
