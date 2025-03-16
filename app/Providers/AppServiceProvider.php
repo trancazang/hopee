@@ -11,7 +11,8 @@ use TeamTeaTime\Forum\Policies\CategoryPolicy;
 use TeamTeaTime\Forum\Policies\ThreadPolicy;
 use TeamTeaTime\Forum\Policies\PostPolicy;
 
-
+use App\Models\Test;
+use App\Policies\TestPolicy;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -34,5 +35,7 @@ class AppServiceProvider extends ServiceProvider
         Category::class => CategoryPolicy::class,
         Thread::class => ThreadPolicy::class,
         Post::class => PostPolicy::class,
+        Test::class => TestPolicy::class,
     ];
+
 }

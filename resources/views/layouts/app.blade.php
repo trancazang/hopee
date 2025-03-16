@@ -14,6 +14,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
+        
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
             <livewire:layout.navigation />
@@ -29,7 +30,9 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                <div class="container mx-auto px-4 py-8">
+                    @yield('content')
+                </div>
             </main>
         </div>
     </body>
