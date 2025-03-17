@@ -5,27 +5,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sức Khỏe Tinh Thần</title>
+    <title>SheZen Harmony</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-900">
        <!-- Navbar -->
-    <nav class="bg-blue-600 text-white py-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center px-6">
-            <a href="{{ url('/') }}" class="text-2xl font-bold">🧠 Mental Health</a>
-            <div class="space-x-6">
-                <a href="{{ route('tests.index') }}" class="hover:underline">📝 Test</a>
-                <a href="{{ route('forum.category.index') }}" class="hover:underline">💬 Forum</a>
+       <nav class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <!-- Logo / Brand -->
+            <a href="{{ url('/') }}" class="text-3xl font-bold flex items-center">
+                <span class="mr-2">🧠</span>
+                <span>SheZen</span>
+            </a>
+            <!-- Navigation Links -->
+            <div class="flex items-center space-x-6">
+                <a href="{{ route('tests.index') }}" class="hover:text-blue-300 transition-colors duration-200">📝 Test</a>
+                <a href="{{ route('forum.category.index') }}" class="hover:text-blue-300 transition-colors duration-200">💬 Forum</a>
                 @auth
-                <!-- Nếu đã đăng nhập -->
-                <a href="{{ route('dashboard') }}" class="hover:underline">📊 Dashboard</a>
-                <a href="{{ route('profile') }}" class="hover:underline">👤 Hồ sơ</a>
-                 @else
-                <!-- Nếu chưa đăng nhập -->
-                <a href="{{ route('login') }}" class="hover:underline">🔑 Đăng nhập</a>
-                <a href="{{ route('register') }}" class="hover:underline">🆕 Đăng ký</a>
-            @endauth
-                   
+                    @if(in_array(auth()->user()->role, ['admin', 'moderator']))
+                    <a href="{{ route('dashboard') }}" class="hover:text-blue-300 transition-colors duration-200">📊 Dashboard</a>
+                    @endif
+                    <a href="{{ route('profile') }}" class="hover:text-blue-300 transition-colors duration-200">👤 Hồ sơ</a>
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="hover:text-blue-300 transition-colors duration-200">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="hover:text-blue-300 transition-colors duration-200">🔑 Đăng nhập</a>
+                    <a href="{{ route('register') }}" class="hover:text-blue-300 transition-colors duration-200">🆕 Đăng ký</a>
+                @endauth
+            </div>
         </div>
     </nav>
 
