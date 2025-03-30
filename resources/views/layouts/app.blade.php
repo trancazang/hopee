@@ -17,7 +17,7 @@
         
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
-            <livewire:layout.navigation />
+            {{-- <livewire:layout.navigation /> --}}
 
             <!-- Page Heading -->
             @if (isset($header))
@@ -27,7 +27,6 @@
                     </div>
                 </header>
             @endif
-
             <!-- Page Content -->
             <main>
                 <div class="container mx-auto px-4 py-8">

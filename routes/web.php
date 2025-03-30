@@ -3,8 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\AdminTestController;
+use App\Livewire\Actions\Logout;
 
-Route::view('/', 'welcome');
+Route::post('/logout', Logout::class)->name('logout');
+
+Route::view('/', 'welcome')->name('welcome');;
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

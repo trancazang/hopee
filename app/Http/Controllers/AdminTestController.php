@@ -10,11 +10,13 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Question;
 use App\Models\Answer;
 use App\Models\Result;
+use App\Policies\TestPolicy;
 
 class AdminTestController extends Controller
 {
     
     use AuthorizesRequests;
+   
     public function index()
     {
         $tests = Test::all();

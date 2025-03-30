@@ -13,6 +13,8 @@ use TeamTeaTime\Forum\Policies\PostPolicy;
 
 use App\Models\Test;
 use App\Policies\TestPolicy;
+
+use Illuminate\Support\Facades\Gate;
 class AppServiceProvider extends ServiceProvider
 {
     /**
