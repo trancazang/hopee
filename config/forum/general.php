@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'display_trashed_posts' => true,
+    'display_trashed_posts' => false,
 
     /*
     |--------------------------------------------------------------------------
