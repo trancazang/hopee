@@ -4,6 +4,22 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\AdminTestController;
 use App\Livewire\Actions\Logout;
+use App\Http\Controllers\ChatController;
+
+
+Route::middleware('auth')->group(function() {
+    // Hiển thị form + list hoặc chat panel
+    Route::get('/chat/{id?}', [ChatController::class, 'index'])->name('chat.show');
+    // Tạo conversation
+    Route::post('/chat', [ChatController::class, 'storeConversation'])->name('chat.store');
+    // Lấy tin nhắn (JSON)
+    Route::get('/chat/{id}/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+    // Gửi tin nhắn
+    Route::post('/chat/{id}/message', [ChatController::class, 'sendMessage'])->name('chat.message');
+});
+//Route::get('/chat', [ChatController::class, 'index'])->name('chat.show');
+
+Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
 
 Route::post('/logout', Logout::class)->name('logout');
 

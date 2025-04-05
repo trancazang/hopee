@@ -15,9 +15,9 @@
 
                 <!-- Mức độ trầm cảm -->
                 <div class="mt-6">
-                    <p class="text-xl font-semibold text-gray-800">📉 Mức độ trầm cảm:</p>
+                    <p class="text-xl font-semibold text-gray-800">📉 Mức độ :</p>
                     <span class="inline-block px-4 py-2 mt-2 rounded-full text-lg font-bold
-                        {{ $result->level == 'Trầm cảm nhẹ' ? 'bg-yellow-100 text-yellow-600' : 
+                        {{ $result->level == '' ? 'bg-yellow-100 text-yellow-600' : 
                            ($result->level == 'Trầm cảm trung bình' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600') }}">
                         {{ $result->level }}
                     </span>

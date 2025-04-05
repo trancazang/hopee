@@ -7,12 +7,15 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Musonza\Chat\Traits\Messageable;
+
 
 class User extends Authenticatable
 {
     use CrudTrait;
     use HasFactory, Notifiable;
-
+    use Messageable;
+    
     /**
      * The attributes that are mass assignable.
      *
@@ -54,4 +57,15 @@ class User extends Authenticatable
             $this->attributes['password'] = bcrypt($value);
         }
     }
+
+    public function getParticipantDetailsAttribute()
+{
+    return [
+        'name' => $this->name,  // giả sử có cột name
+        'role' => 'User',       // hoặc thông tin bổ sung khác
+    ];
+}
+
+
+
 }

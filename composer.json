@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.6",
         "livewire/volt": "^1.0",
+        "musonza/chat": "^6.3",
         "riari/laravel-forum": "6.0"
     },
     "require-dev": {
