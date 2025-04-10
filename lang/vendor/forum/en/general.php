@@ -10,6 +10,7 @@ return [
     'color' => 'Color',
     'color_light_mode' => 'Color (light mode)',
     'color_dark_mode' => 'Color (dark mode)',
+    'generic_confirm' => 'Are you sure you want to perform this action?',
     'confirm_action' => 'Confirm action',
     'confirm_mark_all_read' => 'Are you sure you want to mark all threads as read?',
     'delete' => 'Delete',

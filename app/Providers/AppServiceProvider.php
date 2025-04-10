@@ -11,8 +11,11 @@ use TeamTeaTime\Forum\Policies\CategoryPolicy;
 use TeamTeaTime\Forum\Policies\ThreadPolicy;
 use TeamTeaTime\Forum\Policies\PostPolicy;
 
+
 use App\Models\Test;
 use App\Policies\TestPolicy;
+use TeamTeaTime\Forum\Support\Authorization\PostAuthorization as PackagePostAuth;
+use App\Support\Authorization\PostAuthorization as AppPostAuth;
 
 use Illuminate\Support\Facades\Gate;
 class AppServiceProvider extends ServiceProvider
@@ -22,7 +25,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        if (!class_exists('OriginalPostAuthorization')) {
+            class_alias(AppPostAuth::class, 'OriginalPostAuthorization');
+        }
+    
+        class_alias(AppPostAuth::class, PackagePostAuth::class);
     }
 
     /**
@@ -30,7 +37,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        app()->bind(PackagePostAuth::class, function () {
+            return new AppPostAuth();
+        });
     }
 
     protected $policies = [
