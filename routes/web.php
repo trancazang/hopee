@@ -11,11 +11,18 @@ Route::middleware('auth')->group(function() {
     // Hiển thị form + list hoặc chat panel
     Route::get('/chat/{id?}', [ChatController::class, 'index'])->name('chat.show');
     // Tạo conversation
-    Route::post('/chat', [ChatController::class, 'storeConversation'])->name('chat.store');
+    Route::post('/chat', [ChatController::class, 'store'])->name('chat.store');
     // Lấy tin nhắn (JSON)
-    Route::get('/chat/{id}/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::get('/chat/{id}/messages', [ChatController::class, 'messages'])->name('chat.messages');
     // Gửi tin nhắn
-    Route::post('/chat/{id}/message', [ChatController::class, 'sendMessage'])->name('chat.message');
+    Route::post('/chat/{id}/message', [ChatController::class, 'message'])->name('chat.message');
+    //xoá tin nhắn
+    Route::delete('/chat/{conv}/message/{msg}', [ChatController::class,'destroyMessage'])
+         ->name('chat.message.destroy');
+
+    // Xóa conversation (clear cho participant)
+    Route::delete('/chat/{conv}', [ChatController::class,'destroyConversation'])
+         ->name('chat.destroy');
 });
 //Route::get('/chat', [ChatController::class, 'index'])->name('chat.show');
 

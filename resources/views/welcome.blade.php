@@ -20,6 +20,8 @@
             <!-- Navigation Links -->
             <div class="flex items-center space-x-6">
                 <a href="{{ route('tests.index') }}" class="hover:text-blue-300 transition-colors duration-200">📝 Test</a>
+                <a href="{{ route('chat.show') }}" class="hover:text-blue-300 transition-colors duration-200">📩 Tin nhắn</a>
+
                 <a href="{{ route('forum.category.index') }}" class="hover:text-blue-300 transition-colors duration-200">💬 Forum</a>
                 @auth
                     @if(in_array(auth()->user()->role, ['admin', 'moderator']))
@@ -83,6 +85,13 @@
     <footer class="bg-blue-600 text-white text-center py-6 mt-12">
         <p>&copy; 2024 Mental Health. Mọi quyền được bảo lưu.</p>
     </footer>
+    <a href="{{ route('chat.show') }}"
+   class="fixed bottom-6 right-6 bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-full shadow-lg">
+  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.883L3 20l1.117-4.487A7.96 7.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+  </svg>
+</a>
 
 </body>
 </html>
