@@ -1,166 +1,209 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Musonza\Chat\Facades\ChatFacade as Chat;
-
+use Musonza\Chat\Models\Message;      
 class ChatController extends Controller
-{
-    public function index($id = null)
     {
-        $me = auth()->user();
-
-        // 1. Lấy allUsers cho modal tạo conversation
-        $allUsers = User::where('id', '!=', $me->id)->get();
-
-        // 2. Lấy Collection<Participation> cho user này
-        $participations = Chat::conversations()
-            ->setParticipant($me)
-            ->get(); // Trả về Collection<Participation>
-
-        // 3. Map mỗi Participation thành mảng thuần
-        $conversations = $participations->map(function ($participation) use ($me) {
-            // 3.1 Lấy Conversation model từ Participation
-            $conv = $participation->conversation;
-
-            // 3.2 Lấy tất cả participation pivot rows của conversation
-            //    (mỗi phần tử là Participation)
-            $parts = $conv->participants; // relation participants trên Conversation
-
-            // 3.3 Lấy tên các participant (messageable) ngoại trừ chính bạn
-            $names = $parts
-                ->map(fn($p) => optional($p->messageable)->participantDetails['name'])
-                ->filter(fn($n) => $n && $n !== $me->participantDetails['name'])
-                ->implode(', ');
-
-            // 3.4 Lấy tin nhắn cuối cùng
-            $last = Chat::conversation($conv)
-                ->setParticipant($me)
-                ->getMessages()
-                ->last()?->body;
-
-            return [
-                'id'          => $conv->id,
-                'title'       => $names ?: 'Conversation #' . $conv->id,
-                'lastMessage' => $last,
-            ];
-        })->toArray();
-
-        return view('chat', compact('allUsers', 'conversations', 'id'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'participants' => 'required|array|min:1',
-        ], [
-            'participants.required' => 'Chọn ít nhất một người tham gia.',
-            'participants.min'      => 'Chọn ít nhất một người tham gia.',
-        ]);
-
-        $me = auth()->user();
-        $others = User::whereIn('id', $request->participants)->get();
-        $participants = $others->push($me)->all();
-
-        $conv = Chat::createConversation($participants);
-
-        return redirect()->route('chat.show', $conv->id);
-    }
-
-    public function messages($id)
-    {
-        $me = auth()->user();
-        $conv = Chat::conversations()->getById($id);
-        abort_unless($conv, 404);
-
-        $msgs = Chat::conversation($conv)
-            ->setParticipant($me)
-            ->getMessages();
-
-            return response()->json(
-                $msgs->map(fn($m) => [
-                    'id'     => $m->id,
-                    'body'   => $m->body,
-                    'sender' => $m->sender->participantDetails['name'] ?? 'Unknown',
-                    'time'   => $m->created_at->format('H:i'),
-                    'type'   => $m->type,
-                    'data'   => $m->data,
-                ])
-        );
-    }
-
-    public function message(Request $request, $id)
+        use AuthorizesRequests;
+    
+        /* ───────── Danh sách conversation ───────── */
+        public function index(int $id = null)
         {
-            $request->validate([
-                'body' => 'nullable|string',
-                'file' => 'nullable|file|max:10240' // tối đa 10MB
-            ]);
-
-            $me = auth()->user();
-            $conversation = Chat::conversations()->getById($id);
-            abort_unless($conversation, 404);
-
-            $body = $request->body;
-            $type = 'text';
-            $data = [];
-
-            // Nếu có file thì override body, type và data
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $path = $file->store('attachments', 'public');
-                $url = asset('storage/' . $path);
-
-                $type = str_starts_with($file->getMimeType(), 'image') ? 'image' : 'attachment';
-                $body = $url;
-
-                $data = [
-                    'file_name' => $file->getClientOriginalName(),
-                    'file_url' => $url,
-                    'mime_type' => $file->getMimeType()
+            $me        = auth()->user();
+            $allUsers  = User::where('id', '!=', $me->id)->get();
+        
+            // Lấy danh sách participation
+            $parts = Chat::conversations()->setParticipant($me)->get();
+        
+            $conversations = $parts->map(function ($p) use ($me) {
+                $conv   = $p->conversation;
+                $participants = $conv->getParticipants();
+                $others = $participants->filter(fn($pt) => $pt->id !== $me->id);
+        
+                $title = $others->pluck('participantDetails.name')->implode(', ') ?: 'Conversation #' . $conv->id;
+        
+                $unread = Chat::conversation($conv)->setParticipant($me)->unreadCount();
+        
+                $lastMsg = Chat::conversation($conv)->setParticipant($me)->getMessages()->last();
+                $last    = $lastMsg?->body;
+        
+                $avatar = $others->first()?->participantDetails['avatar'] ?? '/default-avatar.png';
+        
+                return [
+                    'id'          => $conv->id,
+                    'title'       => $title,
+                    'lastMessage' => $last,
+                    'avatar'      => $avatar,
+                    'unread'      => $unread,
                 ];
+            });
+        
+            return view('chat', [
+                'allUsers'      => $allUsers,
+                'conversations' => $conversations,
+                'id'            => $id,
+            ]);
+        }
+    
+        /* ───────── Tạo conversation ───────── */
+        public function store(Request $r)
+        {
+            $r->validate(['participants'=>'required|array|min:1']);
+    
+            $users = User::whereIn('id',$r->participants)->get()->push(auth()->user());
+            $conv  = Chat::createConversation($users->all());
+    
+            return redirect()->route('chat.show', $conv->id);
+        }
+    
+        /* ───────── Lấy message ───────── */
+        public function messages(int $id): JsonResponse
+        {
+            $me   = auth()->user();
+            $conv = Chat::conversations()->getById($id);
+            abort_unless($conv,404);
+    
+            $msgs = Chat::conversation($conv)->setParticipant($me)->getMessages();
+    
+            return response()->json(
+                $msgs->map(fn($m)=>[
+                    'id'        => $m->id,
+                    'body'      => $m->body,
+                    'sender'    => $m->sender->participantDetails['name'] ?? 'Unknown',
+                    'sender_id' => $m->sender->id,
+                    'time'      => $m->created_at->format('H:i'),
+                    'type'      => $m->type,
+                    'data'      => $m->data,
+                    'flagged'   => $m->flagged($me),
+                ])
+            );
+        }
+    
+        /* ───────── Gửi message ───────── */
+        public function message(Request $r, int $id): JsonResponse
+        {
+            $r->validate(['body'=>'nullable|string','file'=>'nullable|file|max:10240']);
+    
+            $conv = Chat::conversations()->getById($id);
+            abort_unless($conv,404);
+    
+            $body = $r->body;   $type='text';   $data=[];
+            if($r->hasFile('file')){
+                $file = $r->file('file');
+                $path = $file->store('attachments','public');
+                $url  = asset('storage/'.$path);
+    
+                $type = str_starts_with($file->getMimeType(),'image') ? 'image':'attachment';
+                $body = $url;
+                $data = ['file_name'=>$file->getClientOriginalName(),
+                         'file_url' =>$url,
+                         'mime_type'=>$file->getMimeType()];
             }
+    
+            Chat::message($body)->type($type)->data($data)
+                ->from(auth()->user())->to($conv)->send();
+    
+            return response()->json(['status'=>'sent']);
+        }
+    
+        /* ───────── Xoá 1 message (cho tôi) ───────── */
+        public function destroyMessage(int $convId,int $msgId): JsonResponse
+        {
+            $conv = Chat::conversations()->getById($convId);
+            $msg  = Chat::messages()->getById($msgId);
+            abort_unless($conv && $msg,404);
+    
+            Chat::message($msg)->setParticipant(auth()->user())->delete();
+            return response()->json(['ok'=>true]);
+        }
+    
+        /* ───────── Clear conversation ───────── */
+        public function destroyConversation(int $convId): JsonResponse
+        {
+            $conv = Chat::conversations()->getById($convId);
+            abort_unless($conv,404);
+    
+            Chat::conversation($conv)->setParticipant(auth()->user())->clear();
+            return response()->json(['ok'=>true]);
+        }
+    
+        public function participants($conversationId)
+    {
+        $conversation = Chat::conversations()->getById($conversationId);
+        $participants = $conversation->getParticipants();
 
-            Chat::message($body)
-                ->type($type)
-                ->data($data)
-                ->from($me)
-                ->to($conversation)
-                ->send();
+        $map = [];
+        foreach ($participants as $p) {
+            $map[$p->id] = $p->participantDetails['name'];
+        }
+        return response()->json($map);
+    }
 
-            return response()->json(['status' => 'sent']);
+    public function addMember(Request $request, $conversationId)
+    {
+        $conversation = Chat::conversations()->getById($conversationId);
+        $user = User::findOrFail($request->user_id);
+
+        Chat::conversation($conversation)->addParticipants([$user]);
+
+        return response()->json(['status' => 'added']);
+    }
+
+    public function removeMember($conversationId, $userId)
+    {
+        \Log::info('⚡️ Vào controller removeMember');
+
+        $conversation = Chat::conversations()->getById($conversationId);
+        abort_unless($conversation, 404);
+
+        $currentUser = auth()->user();
+
+        $isParticipant = $conversation->getParticipants()->contains(function ($p) use ($currentUser) {
+            return $p->id === $currentUser->id && get_class($p) === get_class($currentUser);
+        });
+
+        if (!$isParticipant) {
+            return response()->json(['error' => 'Bạn không có quyền xoá người khác khỏi cuộc trò chuyện này'], 403);
         }
 
+        $user = User::findOrFail($userId);
+        Chat::conversation($conversation)->removeParticipants([$user]);
 
-    public function destroyMessage(Request $request, $convId, $msgId)
-    {
-        $me   = auth()->user();
-        $conv = Chat::conversations()->getById($convId);
-        abort_unless($conv, 404);
-
-        $msg = Chat::messages()->getById($msgId);
-        abort_unless($msg, 404);
-
-        // Xóa tin nhắn cho participant
-        Chat::message($msg)->setParticipant($me)->delete();
-
-        return response()->json(['ok' => true]);
+        return response()->json(['status' => 'removed']);
     }
 
-    /**
-     * Xóa (clear) conversation cho participant hiện tại
-     */
-    public function destroyConversation(Request $request, $convId)
-    {
-        $me   = auth()->user();
-        $conv = Chat::conversations()->getById($convId);
-        abort_unless($conv, 404);
+    
 
-        // Clear toàn bộ messages cho participant
-        Chat::conversation($conv)->setParticipant($me)->clear();
+    
+        /* ───────── Mark‑read ───────── */
+        public function markRead(int $conversation): JsonResponse
+        {
+            $conv = Chat::conversations()->getById($conversation);
+            abort_unless($conv,404);
+    
+            Chat::conversation($conv)->setParticipant(auth()->user())->readAll();
+            return response()->json(['ok'=>true]);
+        }
+    
+        /* ───────── Flag / un‑flag ───────── */
+        public function toggleFlag(Message $message): JsonResponse
+        {
+            $user = auth()->user();
+            Chat::message($message)->setParticipant($user)->toggleFlag();
+            $message->refresh();
+    
+            return response()->json([
+                'id'      =>$message->id,
+                'flagged' =>$message->flagged($user),
+            ]);
+        }
+    
 
-        return response()->json(['ok' => true]);
-    }
   
 }

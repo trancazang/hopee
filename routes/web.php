@@ -5,6 +5,16 @@ use App\Http\Controllers\QuizController;
 use App\Http\Controllers\AdminTestController;
 use App\Livewire\Actions\Logout;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
+
+Route::get('/profile', [UserController::class, 'edit'])
+    ->middleware(['auth'])
+    ->name('profile');
+
+Route::post('/profile/avatar', [UserController::class, 'updateAvatar'])
+    ->middleware(['auth'])
+    ->name('profile.avatar.update');
 
 
 Route::middleware('auth')->group(function() {
@@ -23,8 +33,25 @@ Route::middleware('auth')->group(function() {
     // Xóa conversation (clear cho participant)
     Route::delete('/chat/{conv}', [ChatController::class,'destroyConversation'])
          ->name('chat.destroy');
+    Route::post('chat/{conversation}/read',
+         [ChatController::class, 'markRead'])->name('chat.read');
 });
 //Route::get('/chat', [ChatController::class, 'index'])->name('chat.show');
+// routes/web.php
+    Route::get('/chat/{conversation}/participants',
+           [ChatController::class,'participants'])
+      ->middleware('auth');
+
+      Route::middleware('auth')->group(function () {
+        Route::get('/chat/{conversation}/participants', [ChatController::class, 'participants']);
+        Route::post('/chat/{conversation}/member', [ChatController::class, 'addMember']);
+        Route::delete('/chat/{conversation}/member/{userId}', [ChatController::class, 'removeMember']);
+        
+    });
+    
+    
+
+
 
 Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
 
@@ -32,13 +59,16 @@ Route::post('/logout', Logout::class)->name('logout');
 
 Route::view('/', 'welcome')->name('welcome');;
 
-Route::view('dashboard', 'dashboard')
+Route::view('welcome', 'welcome')
     ->middleware(['auth', 'verified'])
+    ->name('welcome');
+    
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['web', 'auth'])
     ->name('dashboard');
-
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
+// Route::view('profile', 'profile')
+//     ->middleware(['auth'])
+//     ->name('profile');
 
 Route::get('/tests', [QuizController::class, 'index'])
     ->name('tests.index')

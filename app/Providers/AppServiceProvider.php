@@ -47,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
         Thread::class => ThreadPolicy::class,
         Post::class => PostPolicy::class,
         Test::class => TestPolicy::class,
+        \Musonza\Chat\Models\Conversation::class => \App\Policies\ConversationPolicy::class,
     ];
 
 }

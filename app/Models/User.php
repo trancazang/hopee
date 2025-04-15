@@ -61,11 +61,16 @@ class User extends Authenticatable
     public function getParticipantDetailsAttribute()
 {
     return [
-        'name' => $this->name,  // giả sử có cột name
-        'role' => 'User',       // hoặc thông tin bổ sung khác
+        'name' => $this->name,
+        'avatar' => $this->avatar
+            ? asset('storage/avatars/' . $this->avatar)  // nếu bạn lưu file
+            : asset('/images/default-avatar.png')        // ảnh mặc định
     ];
 }
-
-
-
+    public function getAvatarUrlAttribute()
+    {
+        return $this->avatar
+            ? asset('storage/' . $this->avatar)
+            : asset('images/default-avatar.png'); // ảnh mặc định nếu chưa upload
+    }
 }
