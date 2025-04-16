@@ -15,32 +15,23 @@ class ChatController extends Controller
         /* ───────── Danh sách conversation ───────── */
         public function index(int $id = null)
         {
-            $me        = auth()->user();
-            $allUsers  = User::where('id', '!=', $me->id)->get();
+            $me = auth()->user();
+            $allUsers = User::where('id', '!=', $me->id)->get();
         
-            // Lấy danh sách participation
             $parts = Chat::conversations()->setParticipant($me)->get();
         
             $conversations = $parts->map(function ($p) use ($me) {
-                $conv   = $p->conversation;
+                $conv         = $p->conversation;
                 $participants = $conv->getParticipants();
-                $others = $participants->filter(fn($pt) => $pt->id !== $me->id);
-        
-                $title = $others->pluck('participantDetails.name')->implode(', ') ?: 'Conversation #' . $conv->id;
-        
-                $unread = Chat::conversation($conv)->setParticipant($me)->unreadCount();
-        
-                $lastMsg = Chat::conversation($conv)->setParticipant($me)->getMessages()->last();
-                $last    = $lastMsg?->body;
-        
-                $avatar = $others->first()?->participantDetails['avatar'] ?? '/default-avatar.png';
+                $others       = $participants->filter(fn($pt) => $pt->id !== $me->id);
+                $first        = $others->first();
         
                 return [
                     'id'          => $conv->id,
-                    'title'       => $title,
-                    'lastMessage' => $last,
-                    'avatar'      => $avatar,
-                    'unread'      => $unread,
+                    'title'       => $others->pluck('participantDetails.name')->implode(', ') ?: 'Conversation #' . $conv->id,
+                    'lastMessage' => Chat::conversation($conv)->setParticipant($me)->getMessages()->last()?->body,
+                    'unread'      => Chat::conversation($conv)->setParticipant($me)->unreadCount(),
+                    'email'       => $first?->email ?? null,
                 ];
             });
         
@@ -50,6 +41,7 @@ class ChatController extends Controller
                 'id'            => $id,
             ]);
         }
+        
     
         /* ───────── Tạo conversation ───────── */
         public function store(Request $r)
