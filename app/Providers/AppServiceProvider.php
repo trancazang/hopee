@@ -18,6 +18,8 @@ use TeamTeaTime\Forum\Support\Authorization\PostAuthorization as PackagePostAuth
 use App\Support\Authorization\PostAuthorization as AppPostAuth;
 
 use Illuminate\Support\Facades\Gate;
+
+use App\Observers\PostObserver;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -37,9 +39,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Post::observe(PostObserver::class);
         app()->bind(PackagePostAuth::class, function () {
             return new AppPostAuth();
         });
+        
     }
 
     protected $policies = [
@@ -48,6 +52,7 @@ class AppServiceProvider extends ServiceProvider
         Post::class => PostPolicy::class,
         Test::class => TestPolicy::class,
         \Musonza\Chat\Models\Conversation::class => \App\Policies\ConversationPolicy::class,
+        
     ];
 
 }
