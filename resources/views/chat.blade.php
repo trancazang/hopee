@@ -75,6 +75,8 @@
             <label for="fileInput" class="ml-2 cursor-pointer px-3 py-2 border rounded-full bg-gray-100 hover:bg-gray-200">📎</label>
             <button class="ml-2 btn-success">Send</button>
         </form>
+        <div id="preview" class="px-4 pb-4"></div>
+
         @else
         <div class="flex-1 flex items-center justify-center text-gray-500">
             Select or create a conversation.
@@ -157,6 +159,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     @isset($id)
+    const preview = get('#preview');
+    const fileInput = get('#fileInput');
+
+    fileInput?.addEventListener('change', function () {
+        preview.innerHTML = '';
+        const file = this.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.innerHTML = `<img src="${e.target.result}" class="max-w-[150px] rounded shadow border">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
     const convId = {{ $id }};
     const msgs = get('#messages');
     const myName = @json(auth()->user()->participantDetails['name']);
@@ -198,6 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await fetch(`/chat/${convId}/message`, { method: 'POST', headers: { 'X-CSRF-TOKEN': token }, body: fd });
         input.value = '';
         form.querySelector('#fileInput').value = '';
+        preview.innerHTML = '';
         load();
     });
 

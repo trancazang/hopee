@@ -25,7 +25,7 @@
                 <a href="{{ route('forum.category.index') }}" class="hover:text-blue-300 transition-colors duration-200">💬 Forum</a>
                 @auth
                     @if(in_array(auth()->user()->role, ['admin']))
-                    <a href="{{ route('welcome') }}" class="hover:text-blue-300 transition-colors duration-200">📊 Dashboard</a>
+                    <a href="{{ route('backpack.dashboard') }}" class="hover:text-blue-300 transition-colors duration-200">📊 Dashboard</a>
                     @endif
                     <a href="{{ route('profile') }}" class="hover:text-blue-300 transition-colors duration-200">👤 Hồ sơ</a>
                     <form action="{{ route('logout') }}" method="POST" class="inline">

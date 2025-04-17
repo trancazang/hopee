@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="conv-id" content="{{ $id }}">
-    <meta name="user-map" content='@json($allUsers->pluck("participantDetails.name", "id"))'> 
+    {{-- <meta name="conv-id" content="{{ $id }}">
+    <meta name="user-map" content='@json($allUsers->pluck("participantDetails.name", "id"))'>  --}}
     <title>{{ config('app.name', 'Shezen') }}</title>
 
     <!-- Fonts -->
