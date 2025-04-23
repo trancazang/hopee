@@ -42,16 +42,18 @@ class CategoryPolicy extends Base
 
     public function pinThreads($user, Category $category): bool
     {
-        return in_array($user->role, ['admin', 'moderator']);
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     public function view($user, Category $category): bool
     {
-        return $user->role == 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
+
     }
 
     public function delete($user, Category $category): bool
     {
-        return $user->role == 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
+
     }
 }

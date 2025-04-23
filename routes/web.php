@@ -7,7 +7,11 @@ use App\Livewire\Actions\Logout;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ForumSearchController;
+ 
 
+
+Route::get('/forum/search', [ForumSearchController::class, 'index'])->name('forum.search');
 Route::get('/profile', [UserController::class, 'edit'])
     ->middleware(['auth'])
     ->name('profile');

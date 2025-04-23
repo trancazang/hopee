@@ -1,0 +1,37 @@
+<?php
+
+return [
+
+    'actions' => 'Hành động chủ đề',
+    'created' => 'Đã tạo chủ đề',
+    'confirm_perma_delete' => 'Bạn có chắc chắn muốn xoá vĩnh viễn chủ đề này?|Bạn có chắc chắn muốn xoá vĩnh viễn các chủ đề này?',
+    'confirm_restore' => 'Bạn có chắc chắn muốn khôi phục chủ đề này?|Bạn có chắc chắn muốn khôi phục các chủ đề này?',
+    'confirm_delete' => 'Bạn có chắc chắn muốn xoá chủ đề này?|Bạn có chắc chắn muốn xoá các chủ đề này?',
+    'confirm_lock' => 'Bạn có chắc chắn muốn khoá chủ đề này?|Bạn có chắc chắn muốn khoá các chủ đề này?',
+    'confirm_unlock' => 'Bạn có chắc chắn muốn mở khoá chủ đề này?|Bạn có chắc chắn muốn mở khoá các chủ đề này?',
+    'confirm_pin' => 'Bạn có chắc chắn muốn ghim chủ đề này?|Bạn có chắc chắn muốn ghim các chủ đề này?',
+    'confirm_unpin' => 'Bạn có chắc chắn muốn bỏ ghim chủ đề này?|Bạn có chắc chắn muốn bỏ ghim các chủ đề này?',
+    'delete' => 'Xoá chủ đề này',
+    'deleted' => 'Đã xoá chủ đề|Đã xoá các chủ đề',
+    'lock' => 'Khoá',
+    'locked' => 'Đã khoá',
+    'marked_read' => 'Tất cả chủ đề đã được đánh dấu là đã đọc',
+    'new_thread' => 'Chủ đề mới',
+    'newest' => 'Chủ đề mới nhất',
+    'none_found' => 'Không tìm thấy chủ đề nào',
+    'perma_delete' => 'Xoá vĩnh viễn chủ đề|Xoá vĩnh viễn các chủ đề',
+    'perma_deleted' => 'Đã xoá vĩnh viễn chủ đề|Đã xoá vĩnh viễn các chủ đề',
+    'pin' => 'Ghim',
+    'pinned' => 'Đã ghim',
+    'post_the_first' => 'Đăng bài đầu tiên!',
+    'recent' => 'Chủ đề gần đây',
+    'restored' => 'Đã khôi phục chủ đề|Đã khôi phục các chủ đề',
+    'select_all' => 'Chọn tất cả chủ đề',
+    'thread' => 'Chủ đề|Các chủ đề',
+    'updated' => 'Đã cập nhật chủ đề|Đã cập nhật các chủ đề',
+    'unlock' => 'Mở khoá',
+    'unpin' => 'Bỏ ghim',
+    'unread_updated' => 'Chủ đề chưa đọc & mới cập nhật',
+    'view' => 'Xem chủ đề',
+
+];

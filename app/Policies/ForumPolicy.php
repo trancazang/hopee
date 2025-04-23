@@ -9,17 +9,17 @@ class ForumPolicy extends Base
 {
     public function createCategories($user): bool
     {
-        return $user->role == 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     public function moveCategories($user): bool
     {
-        return $user->role == 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     public function renameCategories($user): bool
     {
-        return $user->role == 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     public function viewTrashedThreads($user): bool

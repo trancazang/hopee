@@ -13,7 +13,7 @@ class TestPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     /**
@@ -21,7 +21,7 @@ class TestPolicy
      */
     public function view(User $user, Test $test): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     /**
@@ -29,7 +29,7 @@ class TestPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     /**
@@ -37,7 +37,7 @@ class TestPolicy
      */
     public function update(User $user, Test $test): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     /**
@@ -45,7 +45,7 @@ class TestPolicy
      */
     public function delete(User $user, Test $test): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     /**
@@ -53,7 +53,7 @@ class TestPolicy
      */
     public function restore(User $user, Test $test): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 
     /**
@@ -61,6 +61,6 @@ class TestPolicy
      */
     public function forceDelete(User $user, Test $test): bool
     {
-        return $user->role === 'admin';
+        return in_array($user->role, haystack: ['admin', 'moderator']);
     }
 }

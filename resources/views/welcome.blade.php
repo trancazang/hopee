@@ -30,7 +30,7 @@
                     <a href="{{ route('profile') }}" class="hover:text-blue-300 transition-colors duration-200">👤 Hồ sơ</a>
                     <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
-                        <button type="submit" class="hover:text-blue-300 transition-colors duration-200">Logout</button>
+                        <button type="submit" class="hover:text-blue-300 transition-colors duration-200">Đăng xuất</button>
                     </form>
                 @else
                     <a href="{{ route('login') }}" class="hover:text-blue-300 transition-colors duration-200">🔑 Đăng nhập</a>

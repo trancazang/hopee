@@ -16,7 +16,7 @@
                 @endif
                 <a href="{{ route('profile') }}" class="link">👤 Hồ sơ</a>
                 <form action="{{ route('logout') }}" method="POST" class="inline">@csrf
-                    <button class="link">Logout</button>
+                    <button class="link">Đăng xuất</button>
                 </form>
             @else
                 <a href="{{ route('login') }}" class="link">🔑 Đăng nhập</a>
@@ -29,7 +29,7 @@
 <div class="flex h-[calc(100vh-80px)] bg-gray-100">
     {{-- Sidebar --}}
     <aside class="w-1/3 max-w-xs bg-white border-r flex flex-col">
-        <div class="p-4 border-b"><h2 class="text-xl font-bold">Conversations</h2></div>
+        <div class="p-4 border-b"><h2 class="text-xl font-bold">Tin nhắn</h2></div>
         <div class="p-3 border-b">
             <input id="convSearch" type="text" placeholder="Search…" class="w-full border rounded-full px-4 py-2 focus:outline-none">
         </div>
@@ -52,7 +52,7 @@
             @endforeach
         </div>
         <div class="p-4 border-t">
-            <button id="newBtn" class="btn-primary w-full">+ New Chat</button>
+            <button id="newBtn" class="btn-primary w-full">Mới</button>
         </div>
     </aside>
 
@@ -62,15 +62,15 @@
         <div class="flex items-center justify-between p-4 bg-white border-b">
             <h2 class="text-lg font-semibold">Conversation #{{ $id }}</h2>
             <div class="flex items-center space-x-4">
-                <button id="btnMembers" class="text-sm text-blue-600">👥 Manage</button>
-                <button id="deleteConv" class="text-red-500 hover:text-red-700">Delete</button>
+                <button id="btnMembers" class="text-sm text-blue-600">👥 Quản lý</button>
+                <button id="deleteConv" class="text-red-500 hover:text-red-700">Xoá</button>
             </div>
         </div>
 
         <div id="messages" class="flex-1 p-4 overflow-y-auto bg-white space-y-4"></div>
 
         <form id="sendForm" class="flex p-4 border-t bg-white" enctype="multipart/form-data">
-            <input id="msgInput" name="body" type="text" placeholder="Type a message…" class="flex-1 border rounded-full px-4 py-2 focus:outline-none">
+            <input id="msgInput" name="body" type="text" placeholder="Nhập tin…" class="flex-1 border rounded-full px-4 py-2 focus:outline-none">
             <input type="file" id="fileInput" name="file" class="hidden" accept="image/*,.pdf,.docx,.zip">
             <label for="fileInput" class="ml-2 cursor-pointer px-3 py-2 border rounded-full bg-gray-100 hover:bg-gray-200">📎</label>
             <button class="ml-2 btn-success">Send</button>
@@ -79,7 +79,7 @@
 
         @else
         <div class="flex-1 flex items-center justify-center text-gray-500">
-            Select or create a conversation.
+            Chọn hoặc tạo cuộc trò chuyện mới để bắt đầu.
         </div>
         @endisset
     </main>
@@ -111,14 +111,14 @@
 {{-- Modal: Manage Members --}}
 <div id="memberModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-lg p-6">
-        <h3 class="font-semibold mb-4">👥 Members</h3>
-        <h4 class="font-medium text-sm mb-2">Current</h4>
+        <h3 class="font-semibold mb-4">👥 Thành viên</h3>
+        <h4 class="font-medium text-sm mb-2">Người tham gia</h4>
         <ul id="memberList" class="space-y-1 mb-4"></ul>
-        <h4 class="font-medium text-sm mb-2">Add user</h4>
+        <h4 class="font-medium text-sm mb-2">Thêm</h4>
         <input id="addSearch" type="text" placeholder="Search..." class="w-full border rounded px-2 py-1 mb-2">
         <ul id="addList" class="h-32 overflow-y-auto space-y-1"></ul>
         <div class="text-right mt-4">
-            <button id="closeMembers" class="btn-secondary">Close</button>
+            <button id="closeMembers" class="btn-secondary">Đóng</button>
         </div>
     </div>
 </div>

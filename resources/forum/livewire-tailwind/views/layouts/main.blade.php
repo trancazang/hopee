@@ -71,16 +71,20 @@
                             @else
                                 <span class="w-full md:w-auto">
                                     <a href="{{ url('/login') }}" class="block hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent md:inline">
-                                        {{ __('Log in') }}
+                                        {{ __('Đăng nhập') }}
                                     </a>
                                 </span>
                                 <span class="w-full md:w-auto">
                                     <a href="{{ url('/register') }}" class="block hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent md:inline">
-                                        {{ __('Register') }}
+                                        {{ __('Đăng kí') }}
                                     </a>
                                 </span>
                             @endif
                         </div>
+                        <form method="GET" action="{{ route('forum.search') }}" class="flex items-center gap-2">
+                            <input type="text" name="q" placeholder="Tìm kiếm..." class="border rounded px-3 py-1">
+                            <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Tìm</button>
+                        </form>                       
                     </div>
                 </div>
             </div>

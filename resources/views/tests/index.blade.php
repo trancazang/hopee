@@ -12,7 +12,7 @@
         <div class="flex items-center space-x-6">
             <a href="/tests" class="hover:text-blue-300 transition-colors duration-200">📝 Test</a>
             <a href="/forum" class="hover:text-blue-300 transition-colors duration-200">💬 Forum</a>
-            <a href="/dashboard" class="hover:text-blue-300 transition-colors duration-200">📊 Dashboard</a>
+            <a href="/admin" class="hover:text-blue-300 transition-colors duration-200">📊 Dashboard</a>
             <a href="/profile" class="hover:text-blue-300 transition-colors duration-200">👤 Hồ sơ</a>
             <a href="/logout" class="hover:text-blue-300 transition-colors duration-200">Logout</a>
         </div>
