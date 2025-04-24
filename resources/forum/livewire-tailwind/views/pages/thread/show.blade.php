@@ -1,8 +1,22 @@
 <div x-data="thread" x-on:page-changed="onPageChanged">
     @include ('forum::components.loading-overlay')
     @include ('forum::components.breadcrumbs')
+   
 
     <h1 class="mb-0">{{ $thread->title }}</h1>
+    @php
+    function buildPostTree($posts, $parentId = null, $depth = 0) {
+        return $posts->filter(fn($p) => $p->post_id == $parentId)->map(function ($post) use ($posts, $depth) {
+            $post->depth = $depth;
+            $post->children = buildPostTree($posts, $post->id, $depth + 1);
+            $post->parent = $posts->firstWhere('id', $post->post_id); // để hiển thị tên người trả lời
+            return $post;
+        });
+    }
+    $postTree = buildPostTree($thread->posts);
+
+
+@endphp
 
     <div class="flex items-center mt-4 mb-6">
         <div class="grow">
@@ -145,14 +159,16 @@
         @endif
     </div>
 
-    <div>
+    {{-- <div>
         @foreach ($posts as $post)
             <livewire:forum::components.post.card
                 :$post
                 :key="$post->id . $updateKey"
                 :selectable="in_array($post->id, $selectablePostIds)" />
         @endforeach
-    </div>
+    </div> --}}
+    <x-threaded-replies :posts="$postTree" />
+
 
     {{ $posts->links('forum::components.pagination') }}
 

@@ -7,41 +7,47 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Musonza\Chat\Facades\ChatFacade as Chat;
-use Musonza\Chat\Models\Message;      
+use Musonza\Chat\Models\Message;  
+use Illuminate\Support\Facades\DB;    
 class ChatController extends Controller
     {
         use AuthorizesRequests;
     
         /* ───────── Danh sách conversation ───────── */
         public function index(int $id = null)
-        {
-            $me = auth()->user();
-            $allUsers = User::where('id', '!=', $me->id)->get();
-        
-            $parts = Chat::conversations()->setParticipant($me)->get();
-        
-            $conversations = $parts->map(function ($p) use ($me) {
-                $conv         = $p->conversation;
-                $participants = $conv->getParticipants();
-                $others       = $participants->filter(fn($pt) => $pt->id !== $me->id);
-                $first        = $others->first();
-        
-                return [
-                    'id'          => $conv->id,
-                    'title'       => $others->pluck('participantDetails.name')->implode(', ') ?: 'Conversation #' . $conv->id,
-                    'lastMessage' => Chat::conversation($conv)->setParticipant($me)->getMessages()->last()?->body,
-                    'unread'      => Chat::conversation($conv)->setParticipant($me)->unreadCount(),
-                    'email'       => $first?->email ?? null,
-                ];
-            });
-        
-            return view('chat', [
-                'allUsers'      => $allUsers,
-                'conversations' => $conversations,
-                'id'            => $id,
-            ]);
-        }
-        
+    {
+        $me = auth()->user();
+        $allUsers = User::where('id', '!=', $me->id)->get();
+
+        $parts = Chat::conversations()->setParticipant($me)->get();
+
+        $conversations = $parts->filter(function ($p) use ($me) {
+            $conv = $p->conversation;
+            // Đếm số tin nhắn còn lại với người dùng hiện tại
+            $msgCount = Chat::conversation($conv)->setParticipant($me)->getMessages()->count();
+            return $msgCount > 0;
+        })->map(function ($p) use ($me) {
+            $conv = $p->conversation;
+            $participants = $conv->getParticipants();
+            $others = $participants->filter(fn($pt) => $pt->id !== $me->id);
+            $first = $others->first();
+
+            return [
+                'id'          => $conv->id,
+                'title'       => $others->pluck('participantDetails.name')->implode(', ') ?: 'Conversation #' . $conv->id,
+                'lastMessage' => Chat::conversation($conv)->setParticipant($me)->getMessages()->last()?->body,
+                'unread'      => Chat::conversation($conv)->setParticipant($me)->unreadCount(),
+                'email'       => $first?->email ?? null,
+            ];
+        });
+
+        return view('chat', [
+            'allUsers'      => $allUsers,
+            'conversations' => $conversations,
+            'id'            => $id,
+        ]);
+    }
+
     
         /* ───────── Tạo conversation ───────── */
         public function store(Request $r)
@@ -57,25 +63,34 @@ class ChatController extends Controller
         /* ───────── Lấy message ───────── */
         public function messages(int $id): JsonResponse
         {
-            $me   = auth()->user();
+            $me = auth()->user();
             $conv = Chat::conversations()->getById($id);
-            abort_unless($conv,404);
-    
+            abort_unless($conv, 404);
+
             $msgs = Chat::conversation($conv)->setParticipant($me)->getMessages();
-    
-            return response()->json(
-                $msgs->map(fn($m)=>[
-                    'id'        => $m->id,
-                    'body'      => $m->body,
-                    'sender'    => $m->sender->participantDetails['name'] ?? 'Unknown',
-                    'sender_id' => $m->sender->id,
-                    'time'      => $m->created_at->format('H:i'),
-                    'type'      => $m->type,
-                    'data'      => $m->data,
-                    'flagged'   => $m->flagged($me),
-                ])
-            );
+
+            // Lọc bỏ các message đã bị ẩn với người dùng này
+            $visibleIds = DB::table('chat_message_notifications')
+                ->where('conversation_id', $id)
+                ->where('messageable_id', $me->id)
+                ->where('messageable_type', get_class($me))
+                ->whereNull('deleted_at')
+                ->pluck('message_id')
+                ->toArray();
+
+            $msgs = $msgs->filter(fn($m) => in_array($m->id, $visibleIds));
+
+            return response()->json($msgs->map(fn($m) => [
+                'id'        => $m->id,
+                'body'      => $m->body,
+                'sender'    => $m->sender->participantDetails['name'] ?? 'Unknown',
+                'sender_id' => $m->sender->id,
+                'time'      => $m->created_at->format('H:i'),
+                'type'      => $m->type,
+                'data'      => $m->data,
+            ]));
         }
+
     
         /* ───────── Gửi message ───────── */
         public function message(Request $r, int $id): JsonResponse
@@ -194,6 +209,18 @@ class ChatController extends Controller
                 'id'      =>$message->id,
                 'flagged' =>$message->flagged($user),
             ]);
+        }
+        public function deleteHistory(int $conversationId): JsonResponse
+        {
+            $user = auth()->user();
+
+            DB::table('chat_message_notifications')
+                ->where('conversation_id', $conversationId)
+                ->where('messageable_id', $user->id)
+                ->where('messageable_type', get_class($user))
+                ->update(['deleted_at' => now()]);
+
+            return response()->json(['ok' => true]);
         }
     
 

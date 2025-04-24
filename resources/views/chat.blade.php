@@ -60,7 +60,7 @@
     <main class="flex-1 flex flex-col">
         @isset($id)
         <div class="flex items-center justify-between p-4 bg-white border-b">
-            <h2 class="text-lg font-semibold">Conversation #{{ $id }}</h2>
+            <h2 class="text-lg font-semibold">Tin #{{ $id }}</h2>
             <div class="flex items-center space-x-4">
                 <button id="btnMembers" class="text-sm text-blue-600">👥 Quản lý</button>
                 <button id="deleteConv" class="text-red-500 hover:text-red-700">Xoá</button>
@@ -73,7 +73,7 @@
             <input id="msgInput" name="body" type="text" placeholder="Nhập tin…" class="flex-1 border rounded-full px-4 py-2 focus:outline-none">
             <input type="file" id="fileInput" name="file" class="hidden" accept="image/*,.pdf,.docx,.zip">
             <label for="fileInput" class="ml-2 cursor-pointer px-3 py-2 border rounded-full bg-gray-100 hover:bg-gray-200">📎</label>
-            <button class="ml-2 btn-success">Send</button>
+            <button class="ml-2 btn-success">Gửi</button>
         </form>
         <div id="preview" class="px-4 pb-4"></div>
 
@@ -85,28 +85,49 @@
     </main>
 </div>
 
-{{-- Modal: New Chat --}}
-<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-lg p-6">
-        <h3 class="text-lg font-semibold mb-4 text-center">✨ Tạo cuộc trò chuyện mới</h3>
-        <input id="userSearch" type="text" placeholder="Tìm người dùng…" class="w-full border rounded-full px-4 py-2 mb-4 focus:outline-none">
-        <form id="formNew" method="POST" action="{{ route('chat.store') }}">
-            @csrf
-            <ul id="userList" class="max-h-60 overflow-y-auto mb-4 space-y-2">
-                @foreach($allUsers as $u)
-                    <li class="flex items-center">
-                        <input type="checkbox" name="participants[]" value="{{ $u->id }}" id="u{{ $u->id }}" class="mr-2">
-                        <label for="u{{ $u->id }}">{{ $u->participantDetails['name'] }}</label>
-                    </li>
-                @endforeach
-            </ul>
-            <div class="flex justify-center gap-4">
-                <button type="button" id="cancel" class="border rounded px-4 py-2">Huỷ</button>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-full">Tạo</button>
-            </div>
-        </form>
+<!-- Modal -->
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden" id="modal">
+    <div class="bg-white rounded-2xl w-full max-w-md shadow-lg p-6 relative">
+      <h2 class="text-xl font-semibold text-center mb-4 flex items-center justify-center gap-2">
+        <span>Tạo cuộc trò chuyện mới</span>
+      </h2>
+  
+      <!-- Tìm kiếm -->
+      <div class="relative mb-4">
+        <input id="userSearch" type="text" placeholder="🔍 Tìm người dùng..."
+          class="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+  
+      <!-- Danh sách người dùng -->
+      <form id="formNew" method="POST" action="{{ route('chat.store') }}" onsubmit="document.getElementById('modal').classList.add('hidden')">
+        @csrf
+        <ul id="userList" class="max-h-60 overflow-y-auto space-y-2">
+          @foreach($allUsers as $u)
+            <li class="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded-md transition">
+              <input type="checkbox" name="participants[]" value="{{ $u->id }}" id="u{{ $u->id }}"
+                class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+              <label for="u{{ $u->id }}" class="text-sm font-medium text-gray-700 truncate">
+                {{ $u->participantDetails['name'] }}
+              </label>
+            </li>
+          @endforeach
+        </ul>
+  
+        <!-- Buttons -->
+        <div class="flex justify-end gap-3 mt-6">
+          <button type="button" id="cancel"
+            class="px-4 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100">
+            Hủy
+          </button>
+          <button type="submit"
+            class="px-5 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 font-semibold shadow">
+            Tạo
+          </button>
+        </div>
+      </form>
     </div>
-</div>
+  </div>
+  
 
 {{-- Modal: Manage Members --}}
 <div id="memberModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
@@ -143,6 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = get('#modal');
     get('#newBtn')?.addEventListener('click', () => modal.classList.remove('hidden'));
     get('#cancel')?.addEventListener('click', () => modal.classList.add('hidden'));
+    get('#formNew')?.addEventListener('submit', () => {
+    modal.classList.add('hidden');
+    });
 
     get('#userSearch')?.addEventListener('input', e => {
         const q = e.target.value.toLowerCase();
@@ -219,10 +243,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     get('#deleteConv')?.addEventListener('click', () => {
-        if (confirm('Delete conversation?')) {
-            del(`/chat/${convId}`).then(() => location.href = '{{ route('chat.show') }}');
+        if (confirm('Xoá lịch sử cuộc trò chuyện này?')) {
+            del(`/chat/${convId}`).then(() => {
+                // Xoá giao diện khung chat
+                const link = document.querySelector(`#convList a[href$="/${convId}"]`);
+                if (link) link.remove();
+
+                // Quay về giao diện mặc định
+                location.href = '{{ route('chat.show') }}';
+            });
         }
     });
+
 
     // ===== Manage Members =====
     const mModal = get('#memberModal');
