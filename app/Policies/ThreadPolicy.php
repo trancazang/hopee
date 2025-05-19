@@ -11,11 +11,16 @@ use TeamTeaTime\Forum\Policies\ThreadPolicy as Base;
 
 class ThreadPolicy extends Base
 {
-    public function deletePosts($user, Thread $thread): bool
+    // public function deletePosts($user, Thread $thread): bool
+    // {
+    //     return  in_array($user->role, ['admin', 'moderator']);
+    // }
+
+    public function restorePosts($user, Thread $thread): bool
     {
         return in_array($user->role, ['admin', 'moderator']);
     }
-
+        
     public function rename($user, Thread $thread): bool
     {
         return $user->id === $thread->author_id || in_array($user->role, ['admin', 'moderator']);

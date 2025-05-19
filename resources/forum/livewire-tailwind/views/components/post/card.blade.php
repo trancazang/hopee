@@ -13,31 +13,24 @@
             </div>
         @endif
         <div class="grow p-6 w-full sm:w-4/5">
-            @if ($post->post_id)
-            @php
-                $parent = \TeamTeaTime\Forum\Models\Post::find($post->post_id);
-            @endphp
-            @if ($parent)
-                <div class="mb-4 p-3 border-l-4 border-blue-500 bg-blue-50 rounded">
-                    <div class="text-sm font-semibold text-blue-800 mb-1">
-                        Đang trả lời <a href="{{ Forum::route('post.show', $parent) }}" class="underline hover:text-blue-600">{{ $parent->authorName }}</a>
-                    </div>
-                    <div class="text-xs text-gray-600 italic line-clamp-3">
-                        {!! \Illuminate\Support\Str::limit(strip_tags($parent->content), 200) !!}
-                    </div>
-                </div>
+            @if (isset($post->parent))
+                <livewire:forum::components.post.quote :post="$post->parent" />
             @endif
-        @endif
-        
-        
             <div class="dark:text-slate-100">
-                @if ($post->trashed())
-                    @can ('viewTrashedPosts')
+                    @if ($post->trashed())
+                    @php
+                        $user = auth()->user();
+                        $canViewTrashed = $user && (
+                            $user->can('viewTrashedPosts') || $user->id === $post->author_id
+                        );
+                    @endphp
+                   
+                    @if ($canViewTrashed)
                         <div class="mb-4">
                             {!! Forum::render($post->content) !!}
                         </div>
-                    @endcan
-
+                    @endif
+                
                     <div>
                         <livewire:forum::components.pill
                             bg-color="bg-zinc-400"
@@ -48,7 +41,8 @@
                     </div>
                 @else
                     {!! Forum::render($post->content) !!}
-                @endif
+                @endif    
+                 
             </div>
 
             <div class="flex flex-col sm:flex-row mt-4">

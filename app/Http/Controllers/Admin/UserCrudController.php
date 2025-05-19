@@ -61,27 +61,40 @@ class UserCrudController extends CrudController
      * @return void
      */
     protected function setupCreateOperation()
-    {
-        CRUD::setValidation(UserRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
-        $this->crud->addField([
-            'name' => 'role',
-            'label' => 'Vai trò',
-            'type' => 'select_from_array',
-            'options' => [
-                'admin' => 'Admin',
-                'moderator' => 'Moderator',
-                'user' => 'User',
-            ],
-            'allows_null' => false,
-            'default' => 'user',
-        ]);
-        
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
-    }
+{
+    CRUD::setValidation(UserRequest::class);
+    CRUD::addField([
+        'name' => 'name',
+        'label' => 'Tên người dùng',
+        'type' => 'text',
+    ]);
+
+    CRUD::addField([
+        'name' => 'email',
+        'label' => 'Email',
+        'type' => 'email',
+    ]);
+
+    CRUD::addField([
+        'name' => 'password',
+        'label' => 'Mật khẩu',
+        'type' => 'password',
+    ]);
+
+    CRUD::addField([
+        'name' => 'role',
+        'label' => 'Vai trò',
+        'type' => 'select_from_array',
+        'options' => [
+            'admin' => 'Admin',
+            'moderator' => 'Moderator',
+            'user' => 'User',
+        ],
+        'allows_null' => false,
+        'default' => 'user',
+    ]);
+}
+
 
     /**
      * Define what happens when the Update operation is loaded.
@@ -93,5 +106,16 @@ class UserCrudController extends CrudController
     {
         $this->setupCreateOperation();
     }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($user) {
+            if (isset($user->password) && $user->isDirty('password')) {
+                $user->password = \Hash::make($user->password);
+            }
+        });
+    }
+
     
 }

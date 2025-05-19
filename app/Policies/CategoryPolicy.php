@@ -56,4 +56,8 @@ class CategoryPolicy extends Base
         return in_array($user->role, haystack: ['admin', 'moderator']);
 
     }
+    public function markThreadsAsRead( $user, Category $category): bool
+    {
+        return true;
+    }
 }

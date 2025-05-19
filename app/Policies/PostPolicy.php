@@ -15,4 +15,14 @@ class PostPolicy extends Base
     {
         return $user->id === $post->author_id || in_array($user->role, ['admin', 'moderator']);
     }
+
+    public function delete($user, Post $post): bool
+    {
+        return $user->id === $post->author_id || in_array($user->role, ['admin', 'moderator']);
+    }
+    public function restore($user, Post $post): bool
+    {
+        return in_array($user->role, ['admin', 'moderator']);
+    }
+   
 }
