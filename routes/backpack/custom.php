@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController;
+
 
 // --------------------------
 // Custom Backpack Routes
@@ -20,6 +22,8 @@ Route::group([
     Route::crud('forum-categories', 'ForumCategoriesCrudController');
     Route::crud('forumthreads', 'ForumthreadsCrudController');
     Route::crud('forum-post', 'ForumPostCrudController');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('backpack.dashboard');
+
 }); // this should be the absolute last line of this file
 
 /**

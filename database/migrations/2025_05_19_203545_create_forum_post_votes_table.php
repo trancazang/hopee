@@ -13,8 +13,16 @@ return new class extends Migration
     {
         Schema::create('forum_post_votes', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('post_id');('post_id');
+            $table->unsignedBigInteger('user_id');
+            $table->enum('vote_type', ['upvote', 'downvote']);
             $table->timestamps();
+        
+            $table->unique(['post_id', 'user_id']);
+            $table->foreign('post_id')->references('id')->on('forum_posts')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        
     }
 
     /**
@@ -24,4 +32,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('forum_post_votes');
     }
+    
 };

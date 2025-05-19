@@ -51,13 +51,13 @@ class User extends Authenticatable
         ];
     }
 
-    public function setPasswordAttribute($value)
-    {
-        // Chỉ hash và set nếu có giá trị nhập
-        if (!empty($value)) {
-            $this->attributes['password'] = bcrypt($value);
-        }
-    }
+    // public function setPasswordAttribute($value)
+    // {
+    //     // Chỉ hash và set nếu có giá trị nhập
+    //     if (!empty($value)) {
+    //         $this->attributes['password'] = bcrypt($value);
+    //     }
+    // }
 
     public function getParticipantDetailsAttribute()
 {

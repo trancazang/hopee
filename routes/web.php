@@ -67,9 +67,9 @@ Route::view('welcome', 'welcome')
     ->middleware(['auth', 'verified'])
     ->name('welcome');
     
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['web', 'auth'])
-    ->name('dashboard');
+// Route::get('/dashboard', [DashboardController::class, 'index'])
+//     ->middleware(['web', 'auth'])
+//     ->name('dashboard');
 // Route::view('profile', 'profile')
 //     ->middleware(['auth'])
 //     ->name('profile');
