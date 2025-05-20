@@ -20,6 +20,7 @@
 
 @section('content')
   {{-- Default box --}}
+  
   <div class="row" bp-section="crud-operation-list">
 
     {{-- THE ACTUAL CONTENT --}}
@@ -35,6 +36,7 @@
               </div>
             @endif
           </div>
+          
           @if($crud->getOperationSetting('searchableTable'))
           <div class="col-sm-3">
             <div id="datatable_search_stack" class="mt-sm-0 mt-2 d-print-none">
@@ -43,12 +45,25 @@
                   <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path><path d="M21 21l-6 -6"></path></svg>
                 </span>
                 <input type="search" class="form-control" placeholder="{{ trans('backpack::crud.search') }}..."/>
+                
               </div>
+              {{-- Dropdown lọc theo trạng thái --}}
+
+              <form method="GET" class="w-50">
+                <select name="status" id="filter_status" class="form-select form-select-sm" onchange="this.form.submit()">
+                  <option value="">Tất cả</option>
+                  <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                  <option value="reviewed" {{ request('status') == 'reviewed' ? 'selected' : '' }}>Đã xử lý</option>
+                  <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Từ chối</option>
+                </select>
+              </form>
             </div>
+            
           </div>
           @endif
+        
         </div>
-
+        
         {{-- Backpack List Filters --}}
         @if ($crud->filtersEnabled())
           @include('crud::inc.filters_navbar')

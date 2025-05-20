@@ -32,3 +32,17 @@
 @push('after_scripts')
     @basset(base_path('vendor/backpack/crud/src/resources/assets/js/common.js'))
 @endpush
+<script>
+    function updateStatus(select, reportId) {
+        fetch("/admin/forum-post-report/" + reportId + "/status", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": document.head.querySelector("[name='csrf-token']").content,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ status: select.value })
+        }).then(() => {
+            new Noty({ type: "success", text: "Trạng thái đã cập nhật!" }).show();
+        });
+    }
+</script>

@@ -8,7 +8,12 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ForumSearchController;
- 
+use App\Http\Controllers\ForumController;
+
+Route::middleware('auth')->group(function () {
+    Route::post('/posts/{post}/vote', [ForumController::class, 'vote'])->name('posts.vote');
+    Route::post('/posts/{post}/report', [ForumController::class, 'report'])->name('posts.report');
+});
 
 
 Route::get('/forum/search', [ForumSearchController::class, 'index'])->name('forum.search');

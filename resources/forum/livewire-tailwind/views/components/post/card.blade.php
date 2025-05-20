@@ -16,21 +16,15 @@
             @if (isset($post->parent))
                 <livewire:forum::components.post.quote :post="$post->parent" />
             @endif
+
             <div class="dark:text-slate-100">
-                    @if ($post->trashed())
-                    @php
-                        $user = auth()->user();
-                        $canViewTrashed = $user && (
-                            $user->can('viewTrashedPosts') || $user->id === $post->author_id
-                        );
-                    @endphp
-                   
-                    @if ($canViewTrashed)
+                @if ($post->trashed())
+                    @can ('viewTrashedPosts')
                         <div class="mb-4">
                             {!! Forum::render($post->content) !!}
                         </div>
-                    @endif
-                
+                    @endcan
+
                     <div>
                         <livewire:forum::components.pill
                             bg-color="bg-zinc-400"
@@ -41,8 +35,7 @@
                     </div>
                 @else
                     {!! Forum::render($post->content) !!}
-                @endif    
-                 
+                @endif
             </div>
 
             <div class="flex flex-col sm:flex-row mt-4">
@@ -69,6 +62,34 @@
                                     {{ trans('forum::general.reply') }}
                                 </a>
                             @endcan
+                            {{-- các nút --}}
+                            <div class="mt-4 flex items-center gap-4">
+                                {{-- Upvote --}}
+                                <form method="POST" action="{{ route('posts.vote', $post->id) }}">
+                                    @csrf
+                                    <input type="hidden" name="vote" value="upvote">
+                                    <button type="submit" title="Upvote" class="hover:text-green-600">👍</button>
+                                </form>
+            
+                                {{-- Downvote --}}
+                                <form method="POST" action="{{ route('posts.vote', $post->id) }}">
+                                    @csrf
+                                    <input type="hidden" name="vote" value="downvote">
+                                    <button type="submit" title="Downvote" class="hover:text-red-600">👎</button>
+                                </form>
+            
+                                {{-- Tính điểm --}}
+                                @php
+                                    $upvotes = \App\Models\ForumPostVote::where('post_id', $post->id)->where('vote_type', 'upvote')->count();
+                                    $downvotes = \App\Models\ForumPostVote::where('post_id', $post->id)->where('vote_type', 'downvote')->count();
+                                @endphp
+                                <span class="text-sm text-gray-700 font-semibold">
+                                    Điểm: {{ $upvotes - $downvotes }}
+                                </span>
+            
+                                {{-- Nút báo cáo --}}
+                                <livewire:forum.components.report-post :post-id="$post->id" />
+                                </div>
                         @endif
                         @if ($selectable)
                             <div class="inline-block ml-4">

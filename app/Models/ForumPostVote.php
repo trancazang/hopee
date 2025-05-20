@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForumPostVote extends Model
 {
-    //
+    protected $fillable = ['user_id', 'post_id', 'vote_type'];
+
+    public function post()
+    {
+        return $this->belongsTo(\TeamTeaTime\Forum\Models\Post::class, 'post_id');
+    }
+
 }

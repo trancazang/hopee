@@ -23,7 +23,13 @@ Route::group([
     Route::crud('forumthreads', 'ForumthreadsCrudController');
     Route::crud('forum-post', 'ForumPostCrudController');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('backpack.dashboard');
-
+    Route::crud('forum-post-report', 'ForumPostReportCrudController');
+    Route::post('/forum-post-report/{id}/status', function ($id) {
+        \App\Models\ForumPostReport::where('id', $id)->update([
+            'status' => request('status'),
+        ]);
+        return response()->json(['success' => true]);
+    });
 }); // this should be the absolute last line of this file
 
 /**

@@ -142,6 +142,13 @@
                     }
                 }
             });
+
+            document.addEventListener('livewire:init', () => {
+            Livewire.on('notify', ({ message }) => {
+                alert(message); //report notification
+            });
+        });
         </script>
+
     </body>
 </html>
