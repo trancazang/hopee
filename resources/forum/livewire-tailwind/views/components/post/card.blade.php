@@ -37,7 +37,38 @@
                     {!! Forum::render($post->content) !!}
                 @endif
             </div>
+             {{-- các nút --}}
+                @php
+                $userVote = \App\Models\ForumPostVote::where('post_id', $post->id)
+                    ->where('user_id', auth()->id())
+                    ->value('vote_type');
 
+                $score = \App\Models\ForumPostVote::where('post_id', $post->id)
+                    ->where('vote_type', 'upvote')->count()
+                    - \App\Models\ForumPostVote::where('post_id', $post->id)
+                    ->where('vote_type', 'downvote')->count();
+            @endphp
+
+            {{--  tất cả component con vào 1 thẻ div --}}
+            <div class="flex items-center gap-4 mt-4">
+                <livewire:forum.components.vote-post
+                    :post-id="$post->id"
+                    :initial-score="$score"
+                    :initial-vote="$userVote"
+                />
+
+                <livewire:forum.components.report-post :post-id="$post->id" />
+
+                @if ($selectable)
+                    <div class="inline-block ml-4">
+                        <x-forum::form.input-checkbox
+                            id=""
+                            :value="$post->id"
+                            @change="onChanged" />
+                    </div>
+                @endif
+            </div>
+            
             <div class="flex flex-col sm:flex-row mt-4">
                 <div class="grow text-slate-500">
                     <livewire:forum::components.timestamp :carbon="$post->created_at" />
@@ -47,6 +78,7 @@
                     @endif
                 </div>
                 @if (!isset($single) || !$single)
+                
                     <div class="text-right sm:text-left mt-2 sm:mt-0">
                         @if (!$post->trashed())
                             <a href="{{ Forum::route('post.show', $post) }}" class="font-medium">
@@ -62,45 +94,10 @@
                                     {{ trans('forum::general.reply') }}
                                 </a>
                             @endcan
-                            {{-- các nút --}}
-                            <div class="mt-4 flex items-center gap-4">
-                                {{-- Upvote --}}
-                                <form method="POST" action="{{ route('posts.vote', $post->id) }}">
-                                    @csrf
-                                    <input type="hidden" name="vote" value="upvote">
-                                    <button type="submit" title="Upvote" class="hover:text-green-600">👍</button>
-                                </form>
-            
-                                {{-- Downvote --}}
-                                <form method="POST" action="{{ route('posts.vote', $post->id) }}">
-                                    @csrf
-                                    <input type="hidden" name="vote" value="downvote">
-                                    <button type="submit" title="Downvote" class="hover:text-red-600">👎</button>
-                                </form>
-            
-                                {{-- Tính điểm --}}
-                                @php
-                                    $upvotes = \App\Models\ForumPostVote::where('post_id', $post->id)->where('vote_type', 'upvote')->count();
-                                    $downvotes = \App\Models\ForumPostVote::where('post_id', $post->id)->where('vote_type', 'downvote')->count();
-                                @endphp
-                                <span class="text-sm text-gray-700 font-semibold">
-                                    Điểm: {{ $upvotes - $downvotes }}
-                                </span>
-            
-                                {{-- Nút báo cáo --}}
-                                <livewire:forum.components.report-post :post-id="$post->id" />
-                                </div>
-                        @endif
-                        @if ($selectable)
-                            <div class="inline-block ml-4">
-                                <x-forum::form.input-checkbox
-                                    id=""
-                                    :value="$post->id"
-                                    @change="onChanged" />
-                            </div>
+                            
+                        @endif                       
                         @endif
                     </div>
-                @endif
             </div>
         </div>
     </div>

@@ -1,5 +1,10 @@
-<div>
-    <button wire:click="openModal" class="text-gray-600 hover:text-red-600">🏴 Báo cáo</button>
+<div >
+    <button wire:click="openModal" class="text-gray-600 hover:text-red-600 flex flex-row items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
+      </svg>
+       Báo cáo
+    </button>
 
     @if ($showModal)
         <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">

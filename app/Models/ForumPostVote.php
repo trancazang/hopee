@@ -12,5 +12,7 @@ class ForumPostVote extends Model
     {
         return $this->belongsTo(\TeamTeaTime\Forum\Models\Post::class, 'post_id');
     }
+        public function user() { return $this->belongsTo(User::class); }
+
 
 }
