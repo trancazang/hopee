@@ -41,6 +41,14 @@ class ForumPostCrudController extends CrudController
     {
         CRUD::column('id');
         CRUD::addColumn([
+            'label' => 'Danh mục',
+            'type' => 'select',
+            'name' => 'category', // tên quan hệ ở model
+            'entity' => 'category',
+            'model' => 'App\Models\ForumCategory',
+            'attribute' => 'title',
+        ]);
+        CRUD::addColumn([
             'name' => 'thread_id',
             'label' => 'Chủ đề',
             'type' => 'select',
@@ -48,7 +56,16 @@ class ForumPostCrudController extends CrudController
             'model' => 'App\Models\Forumthreads',
             'attribute' => 'title',
         ]);
-        CRUD::column('author_id');
+        
+        CRUD::addColumn([
+            'name' => 'author_id',
+            'label' => 'Tác giả',
+            'type' => 'select',
+            'entity' => 'author',
+            'model' => 'App\Models\User',
+            'attribute' => 'name',
+        ]);
+        
         CRUD::column('sequence');
         CRUD::column('created_at');
     }
@@ -63,20 +80,34 @@ class ForumPostCrudController extends CrudController
     {
         CRUD::setValidation(PostRequest::class);
 
-        CRUD::addField([
-            'name' => 'thread_id',
-            'label' => 'Chủ đề',
-            'type' => 'select',
-            'entity' => 'thread',
-            'model' => 'App\Models\Forumthreads',
-            'attribute' => 'title',
-        ]);
+    // Chọn chủ đề (thread)
+    CRUD::addField([
+        'name' => 'thread_id',
+        'label' => 'Chủ đề',
+        'type' => 'select',
+        'entity' => 'thread',
+        'model' => 'App\Models\Forumthreads',
+        'attribute' => 'title',
+    ]);
 
-        CRUD::field('author_id')->type('number');
-        CRUD::field('content')->type('textarea');
-        CRUD::field('sequence')->type('number');
+    // Chọn người đăng (author)
+    CRUD::addField([
+        'name' => 'author_id',
+        'label' => 'Tác giả',
+        'type' => 'select',
+        'entity' => 'author',
+        'model' => 'App\Models\User',
+        'attribute' => 'name',
+    ]);
+
+    // Nội dung bài viết
+    CRUD::addField([
+        'name' => 'content',
+        'label' => 'Nội dung',
+        'type' => 'textarea',
+    ]);
+
     }
-
     /**
      * Define what happens when the Update operation is loaded.
      * 

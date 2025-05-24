@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         }
     
         class_alias(AppPostAuth::class, PackagePostAuth::class);
+        
     }
 
     /**

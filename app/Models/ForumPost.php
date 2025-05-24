@@ -26,12 +26,27 @@ class ForumPost extends Model
         'author_id',
         'content',
         'post_id',
-        'sequence',
+        //'sequence',
     ];
     public function thread()
     {
         return $this->belongsTo(Forumthreads::class, 'thread_id');
     }
+        public function author()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'author_id');
+    }
+    public function category()
+{
+    return $this->hasOneThrough(
+        \App\Models\ForumCategories::class,
+        \App\Models\Forumthreads::class,
+        'id', // khóa chính của forum_threads
+        'id', // khóa chính của forum_categories
+        'thread_id', // khóa ngoại trong forum_posts
+        'category_id' // khóa ngoại trong forum_threads
+    );
+}
     /*
     |--------------------------------------------------------------------------
     | FUNCTIONS
