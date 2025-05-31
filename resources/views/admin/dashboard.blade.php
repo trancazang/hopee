@@ -2,8 +2,112 @@
 
 @section('content')
 <div class="container" style="margin-top: 80px;">
+    <h3 class="mb-4">📊 Tổng quan hệ thống</h3>
+      <div class="row text-center mb-4">
+        {{-- Người dùng --}}
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm py-4">
+                <div class="card-body">
+                    <div class="text-muted small mb-2">
+                        <i class="la la-user la-lg text-primary"></i> Người dùng
+                    </div>
+                    <div class="display-5 fw-bold text-primary">{{ number_format($userCount) }}</div>
+                </div>
+            </div>
+        </div>
+    
+        {{-- Chủ đề --}}
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm py-4">
+                <div class="card-body">
+                    <div class="text-muted small mb-2">
+                        <i class="la la-comments la-lg text-success"></i> Chủ đề
+                    </div>
+                    <div class="display-5 fw-bold text-success">{{ number_format($threadCount) }}</div>
+                </div>
+            </div>
+        </div>
+    
+        {{-- Bài viết --}}
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm py-4">
+                <div class="card-body">
+                    <div class="text-muted small mb-2">
+                        <i class="la la-file-alt la-lg text-warning"></i> Bài viết
+                    </div>
+                    <div class="display-5 fw-bold text-warning">{{ number_format($postCount) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Tổng quan người dùng --}}
+    {{-- ✅ Hàng thống kê tuần --}}
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-start border-4 border-success shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted">🆕 Người dùng mới trong tuần</div>
+                        <div class="display-5 fw-bold text-primary">{{ number_format($newUsersThisWeek) }}</div>
+                    </div>
+                    <i class="la la-user-plus la-3x text-success"></i>
+                </div>
+            </div>
+        </div>
 
-    <h3 class="mb-4">📊 Thống kê hệ thống</h3>
+        <div class="col-md-6">
+            <div class="card border-start border-4 border-info shadow-sm h-100">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted">📝 Bài viết mới trong tuần</div>
+                        <div class="display-5 fw-bold text-info">{{ number_format($newPostsThisWeek) }}</div>
+                    </div>
+                    <i class="la la-file-alt la-3x text-info"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ✅ Hàng Word Cloud --}}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h5>☁️ Từ khoá phổ biến (Word Cloud)</h5>
+            <div id="wordCloud" style="width: 100%; height: 350px;"></div>
+        </div>
+    </div>
+
+    {{-- ✅ Danh sách người dùng mới --}}
+    <div class="card mt-3 shadow-sm">
+        <div class="card-header bg-success text-white">
+            <i class="la la-users"></i> Danh sách người dùng mới trong tuần
+        </div>
+        <div class="card-body p-0">
+            @if($newUsersList->isEmpty())
+                <div class="p-3 text-muted">Không có người dùng mới trong tuần này.</div>
+            @else
+                <table class="table table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>👤 Họ tên</th>
+                            <th>📧 Email</th>
+                            <th>🕐 Thời gian tạo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($newUsersList as $user)
+                            <tr>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
+        </div>
+    </div>
+       
+    <span> </span>
     <form method="GET" class="row g-3 align-items-end mb-4">
         <div class="col-md-3">
             <label>Tháng</label>
@@ -14,7 +118,8 @@
                 @endfor
             </select>
         </div>
-        <div class="col-md-3">
+        {{-- Thống kê trong tuần --}}
+               <div class="col-md-3">
             <label>Năm</label>
             <select name="year" class="form-select">
                 <option value="">-- Tất cả --</option>
@@ -27,32 +132,6 @@
             <button type="submit" class="btn btn-primary">Lọc</button>
         </div>
     </form>
-    
-    {{-- Tổng quan --}}
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card bg-primary text-white shadow">
-                <div class="card-body">
-                    👤 Người dùng: <strong>{{ $userCount }}</strong>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-success text-white shadow">
-                <div class="card-body">
-                    🧵 Chủ đề: <strong>{{ $threadCount }}</strong>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-warning text-white shadow">
-                <div class="card-body">
-                    📝 Bài viết: <strong>{{ $postCount }}</strong>
-                </div>
-            </div>
-        </div>
-    </div>
-    <span> </span>
     <div class="row">
         {{-- Bài viết theo tháng --}}
         <div class="col-md-6 mb-4">
@@ -61,11 +140,14 @@
                 <canvas id="postsChart" height="230"></canvas>
             </div>
         </div>
-        {{-- Word Cloud --}}
+        {{-- Bài viết theo tuần --}}
         <div class="col-md-6 mb-4">
-            <h5>☁️ Từ khoá phổ biến (Word Cloud)</h5>
-            <div id="wordCloud" style="width: 100%; height: 350px;"></div>
+            <h5>📆 Bài viết theo tuần</h5>
+            <div class="card shadow-sm p-3">
+                <canvas id="postsChartWeek" height="230"></canvas>
+            </div>
         </div>
+      
     </div>
     
     <div class="row">
@@ -129,7 +211,7 @@
     <div class="mt-5 mb-5">
         <h5>🔍 Từ khoá tâm lý phổ biến</h5>
         <ul class="list-group shadow-sm">
-            @foreach ($topKeywords as $word => $count)
+            @foreach ($topKeywordsRaw as $word => $count)
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     {{ $word }}
                     <span class="badge bg-secondary rounded-pill">{{ $count }} lần</span>
@@ -180,6 +262,50 @@
     } else {
         console.error("Không tìm thấy canvas #postsChart");
     }
+    
+    // Biểu đồ theo tuần
+    const ctxWeek = document.getElementById('postsChartWeek')?.getContext('2d');
+    if (ctxWeek) {
+        new Chart(ctxWeek, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($labelsByWeek) !!},
+                datasets: [{
+                    label: 'Bài viết theo tuần',
+                    data: {!! json_encode(array_values($postsByWeek)) !!},
+                    backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y', // 🎯 Biểu đồ ngang
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.raw} bài viết`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Số lượng bài viết'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     //biểu đồ user vote
     const voteCtx = document.getElementById('votesChart')?.getContext('2d');
     if (voteCtx) {
@@ -206,11 +332,7 @@
         });
     }
     //biểu đồ từ khoá
-    const keywordData = {!! json_encode(
-        collect($topKeywords)->map(function ($count, $word) {
-            return ['text' => $word, 'size' => 10 + $count * 2];
-        })->values()
-    ) !!};
+    const keywordData = {!! json_encode($topKeywords) !!};
 
     const width = document.getElementById('wordCloud').clientWidth;
     const height = 400;
@@ -228,13 +350,15 @@
         .start();
 
     function draw(words) {
-        d3.select("#wordCloud")
+        const svg = d3.select("#wordCloud")
             .append("svg")
             .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-            .selectAll("text")
+            .attr("height", height);
+
+        const g = svg.append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        g.selectAll("text")
             .data(words)
             .enter().append("text")
             .style("font-size", d => d.size + "px")
@@ -243,8 +367,11 @@
             .attr("transform", d =>
                 `translate(${[d.x, d.y]})rotate(${d.rotate})`
             )
-            .text(d => d.text);
+            .text(d => d.text)
+            .append("title") // ⬅ Tooltip khi hover
+            .text(d => `${d.text} (${d.count} lần)`);
     }
+
     //số lượng bài theo chủ đề
     const threadCtx = document.getElementById('threadsChart')?.getContext('2d');
     if (threadCtx) {

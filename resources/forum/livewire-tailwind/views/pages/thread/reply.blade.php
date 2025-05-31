@@ -2,8 +2,8 @@
     @include ('forum::components.loading-overlay')
     @include ('forum::components.breadcrumbs')
 
-    <div class="flex justify-center items-center">
-        <div class="grow max-w-screen-lg">
+    <div class="mt-6">
+
             <h1 class="mb-2">{{ trans('forum::general.reply') }}</h1>
             <h2 class="text-slate-500">Re: {{ $thread->title }}</h2>
 
@@ -32,5 +32,4 @@
                 </form>
             </div>
         </div>
-    </div>
 </div>
