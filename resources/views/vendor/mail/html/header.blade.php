@@ -11,7 +11,7 @@
 </td>
 </tr> --}}
  
-@props(['url' => url('/')])
+{{-- @props(['url' => url('/')])
 
 <nav class="bg-blue-600 text-white py-4 shadow-md">
     <div class="container mx-auto flex justify-between items-center px-6">
@@ -35,4 +35,4 @@
             @endauth
         </div>
     </div>
-</nav>
+</nav> --}}

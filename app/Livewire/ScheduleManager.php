@@ -7,6 +7,7 @@ use App\Models\AdviceRequest;
 use App\Models\ModeratorSchedule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use App\Services\AdviceRequestNotifier;
 
 use Carbon\Carbon;
 
@@ -19,9 +20,18 @@ class ScheduleManager extends Component
 
     /* Nhận yêu cầu */
     public function accept(int $id): void
-    {
+    {       \Log::info('confirmAccept() được gọi với requestId=' . $this->requestId);
+
         $this->requestId = $id;
         $this->mode = 'calendar';
+        $request = AdviceRequest::findOrFail($this->requestId);
+        $request->update([
+        'status' => AdviceRequest::SCHEDULED,
+        'moderator_id' => auth()->id(),
+    ]);
+
+    app(AdviceRequestNotifier::class)->notify($request);
+    session()->flash('success', 'Đã tiếp nhận & gửi thông báo.');
     }
 
     /* Lưu lịch */
@@ -53,6 +63,7 @@ class ScheduleManager extends Component
         // có thể dispatch Mail ở đây
         session()->flash('success','Đã đặt lịch thành công.');
         $this->reset(['mode','requestId','scheduled_at','meeting_link']);
+        
     }
 
     public function render()
@@ -66,5 +77,6 @@ class ScheduleManager extends Component
     {
         $this->reset(); 
     }
+    
 
 }
