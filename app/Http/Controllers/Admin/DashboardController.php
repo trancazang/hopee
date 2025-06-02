@@ -9,7 +9,7 @@ use TeamTeaTime\Forum\Models\Thread;
 use TeamTeaTime\Forum\Models\Category;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
-
+use Carbon\Carbon;
 
 
 class DashboardController extends Controller
@@ -131,18 +131,68 @@ class DashboardController extends Controller
     $filtered = array_filter($phrases, fn($p) => mb_strlen(trim($p)) > 3);
     $freq = array_count_values($filtered);
     arsort($freq);
-    $topKeywords = array_slice($freq, 0, 30, true); // word cloud dùng nhiều hơn
+    $topKeywordsRaw = array_slice($freq, 0, 30, true); // dùng cho danh sách
+    $topKeywords = collect($topKeywordsRaw)
+    ->map(function ($count, $word) {
+        return ['text' => $word, 'size' => 10 + $count * 2, 'count' => $count];
+    })
+    ->values(); // dùng cho word cloud
+
+        // word cloud dùng nhiều hơn
+    // Lọc tuần theo tháng và năm (nếu có)
+    $postsByWeek = (clone $postBase)
+    ->selectRaw('WEEK(created_at, 1) as week, COUNT(*) as total')
+    ->groupByRaw('WEEK(created_at, 1)')
+    ->orderBy('week');
+
+    if ($month) {
+    $postsByWeek->whereMonth('created_at', $month);
+    }
+    if ($year) {
+    $postsByWeek->whereYear('created_at', $year);
+    }
+
+    $postsByWeek = $postsByWeek->pluck('total', 'week')->toArray();
+
+    // Nhãn tuần (dựa vào tháng/năm lọc)
+    $labelsByWeek = collect(array_keys($postsByWeek))->map(function ($week) use ($year) {
+    $baseYear = $year ?? Carbon::now()->year;
+    $start = Carbon::createFromDate($baseYear)->startOfYear()->addWeeks($week - 1)->startOfWeek();
+    $end = (clone $start)->endOfWeek();
+    return "Tuần $week\n(" . $start->format('d/m') . ' - ' . $end->format('d/m') . ")";
+    })->toArray();
+        
+    // Lấy ngày bắt đầu & kết thúc tuần hiện tại (hoặc dựa vào request nếu có lọc)
+    $startOfWeek = Carbon::now()->startOfWeek();
+    $endOfWeek = Carbon::now()->endOfWeek();
+
+    // Người dùng mới trong tuần
+    $newUsersThisWeek = User::whereBetween('created_at', [$startOfWeek, $endOfWeek])->count();
+    $newUsersList = User::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+    ->orderBy('created_at', 'desc')
+    ->get(['name', 'email', 'created_at']);
+
+    // Bài viết mới trong tuần
+    $newPostsThisWeek = DB::table('forum_posts')
+        ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+        ->count();
 
     return view('admin.dashboard', compact(
         'userCount',
         'postCount',
         'threadCount',
         'postsByMonth',
+        'postsByWeek',
+        'labelsByWeek',
         'topThreads',
         'topPosts',
         'topUsers',
         'topKeywords',
+        'topKeywordsRaw',  
         'postsByThread',
+        'newUsersThisWeek',
+        'newUsersList',
+        'newPostsThisWeek',
         'month',
         'year'
     ));

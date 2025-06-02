@@ -1,66 +1,56 @@
 @extends(backpack_view('blank'))
 
 @section('content')
-<div class="container" style="margin-top: 80px;">
+<div class="container py-5">
     <h3 class="mb-4">📊 Tổng quan hệ thống</h3>
-      <div class="row text-center mb-4">
-        {{-- Người dùng --}}
+
+    {{-- Tổng quan hệ thống --}}
+    <div class="row g-4 text-center mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm py-4">
+            <div class="card h-100 shadow-sm">
                 <div class="card-body">
-                    <div class="text-muted small mb-2">
-                        <i class="la la-user la-lg text-primary"></i> Người dùng
-                    </div>
+                    <div class="text-muted small mb-2"><i class="la la-user text-primary"></i> Người dùng</div>
                     <div class="display-5 fw-bold text-primary">{{ number_format($userCount) }}</div>
                 </div>
             </div>
         </div>
-    
-        {{-- Chủ đề --}}
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm py-4">
+            <div class="card h-100 shadow-sm">
                 <div class="card-body">
-                    <div class="text-muted small mb-2">
-                        <i class="la la-comments la-lg text-success"></i> Chủ đề
-                    </div>
+                    <div class="text-muted small mb-2"><i class="la la-comments text-success"></i> Chủ đề</div>
                     <div class="display-5 fw-bold text-success">{{ number_format($threadCount) }}</div>
                 </div>
             </div>
         </div>
-    
-        {{-- Bài viết --}}
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm py-4">
+            <div class="card h-100 shadow-sm">
                 <div class="card-body">
-                    <div class="text-muted small mb-2">
-                        <i class="la la-file-alt la-lg text-warning"></i> Bài viết
-                    </div>
+                    <div class="text-muted small mb-2"><i class="la la-file-alt text-warning"></i> Bài viết</div>
                     <div class="display-5 fw-bold text-warning">{{ number_format($postCount) }}</div>
                 </div>
             </div>
         </div>
     </div>
-    {{-- Tổng quan người dùng --}}
-    {{-- ✅ Hàng thống kê tuần --}}
-    <div class="row mb-4">
+
+    {{-- Thống kê tuần --}}
+    <div class="row g-4 mb-4">
         <div class="col-md-6">
-            <div class="card border-start border-4 border-success shadow-sm h-100">
+            <div class="card border-start border-4 border-success shadow-sm">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <div class="text-muted">🆕 Người dùng mới trong tuần</div>
-                        <div class="display-5 fw-bold text-primary">{{ number_format($newUsersThisWeek) }}</div>
+                        <div class="display-6 fw-bold text-primary">{{ number_format($newUsersThisWeek) }}</div>
                     </div>
                     <i class="la la-user-plus la-3x text-success"></i>
                 </div>
             </div>
         </div>
-
         <div class="col-md-6">
-            <div class="card border-start border-4 border-info shadow-sm h-100">
+            <div class="card border-start border-4 border-info shadow-sm">
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <div>
                         <div class="text-muted">📝 Bài viết mới trong tuần</div>
-                        <div class="display-5 fw-bold text-info">{{ number_format($newPostsThisWeek) }}</div>
+                        <div class="display-6 fw-bold text-info">{{ number_format($newPostsThisWeek) }}</div>
                     </div>
                     <i class="la la-file-alt la-3x text-info"></i>
                 </div>
@@ -68,46 +58,7 @@
         </div>
     </div>
 
-    {{-- ✅ Hàng Word Cloud --}}
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h5>☁️ Từ khoá phổ biến (Word Cloud)</h5>
-            <div id="wordCloud" style="width: 100%; height: 350px;"></div>
-        </div>
-    </div>
-
-    {{-- ✅ Danh sách người dùng mới --}}
-    <div class="card mt-3 shadow-sm">
-        <div class="card-header bg-success text-white">
-            <i class="la la-users"></i> Danh sách người dùng mới trong tuần
-        </div>
-        <div class="card-body p-0">
-            @if($newUsersList->isEmpty())
-                <div class="p-3 text-muted">Không có người dùng mới trong tuần này.</div>
-            @else
-                <table class="table table-striped mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>👤 Họ tên</th>
-                            <th>📧 Email</th>
-                            <th>🕐 Thời gian tạo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($newUsersList as $user)
-                            <tr>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @endif
-        </div>
-    </div>
-       
-    <span> </span>
+    {{-- Biểu đồ thống kê --}}
     <form method="GET" class="row g-3 align-items-end mb-4">
         <div class="col-md-3">
             <label>Tháng</label>
@@ -118,8 +69,7 @@
                 @endfor
             </select>
         </div>
-        {{-- Thống kê trong tuần --}}
-               <div class="col-md-3">
+        <div class="col-md-3">
             <label>Năm</label>
             <select name="year" class="form-select">
                 <option value="">-- Tất cả --</option>
@@ -132,83 +82,105 @@
             <button type="submit" class="btn btn-primary">Lọc</button>
         </div>
     </form>
-    <div class="row">
-        {{-- Bài viết theo tháng --}}
-        <div class="col-md-6 mb-4">
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
             <h5>📅 Bài viết theo tháng</h5>
-            <div class="card shadow-sm p-3">
-                <canvas id="postsChart" height="230"></canvas>
-            </div>
+            <div class="card shadow-sm p-3"><canvas id="postsChart" height="230"></canvas></div>
         </div>
-        {{-- Bài viết theo tuần --}}
-        <div class="col-md-6 mb-4">
+        <div class="col-md-6">
             <h5>📆 Bài viết theo tuần</h5>
-            <div class="card shadow-sm p-3">
-                <canvas id="postsChartWeek" height="230"></canvas>
-            </div>
+            <div class="card shadow-sm p-3"><canvas id="postsChartWeek" height="230"></canvas></div>
         </div>
-      
     </div>
-    
-    <div class="row">
-        {{-- Vote theo người dùng --}}
-        <div class="col-md-6 mb-4">
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
             <h5>👍 Lượt vote theo người dùng</h5>
-            <div class="card shadow-sm p-3">
-                <canvas id="votesChart" height="230"></canvas>
-            </div>
+            <div class="card shadow-sm p-3"><canvas id="votesChart" height="230"></canvas></div>
         </div>
-    
-        {{-- Bài viết theo chủ đề --}}
-        <div class="col-md-6 mb-4">
+        <div class="col-md-6">
             <h5>🧵 Bài viết theo chủ đề</h5>
-            <div class="card shadow-sm p-3">
-                <canvas id="threadsChart" height="230"></canvas>
+            <div class="card shadow-sm p-3"><canvas id="threadsChart" height="230"></canvas></div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <h5>☁️ Từ khoá phổ biến (Word Cloud)</h5>
+            <div id="wordCloud" style="width: 100%; height: 350px;"></div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <i class="la la-users"></i> Danh sách người dùng mới trong tuần
+                </div>
+                <div class="card-body p-0">
+                    @if($newUsersList->isEmpty())
+                        <div class="p-3 text-muted">Không có người dùng mới trong tuần này.</div>
+                    @else
+                        <table class="table table-striped mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>👤 Họ tên</th>
+                                    <th>📧 Email</th>
+                                    <th>🕐 Thời gian tạo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($newUsersList as $user)
+                                    <tr>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
 
-    {{-- Chủ đề nổi bật --}}
-    <div class="mt-5">
-        <h5>🔥 Chủ đề được thảo luận nhiều nhất</h5>
-        <ul class="list-group shadow-sm">
-            @foreach ($topThreads as $thread)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ $thread['title'] }}
-                    <span class="badge bg-primary rounded-pill">{{ $thread['count'] }} bài viết</span>
-                </li>
-            @endforeach
-        </ul>
+    {{-- Danh sách các thống kê chi tiết --}}
+    <div class="row g-4">
+        <div class="col-md-4">
+            <h5>🔥 Chủ đề được thảo luận nhiều nhất</h5>
+            <ul class="list-group shadow-sm">
+                @foreach ($topThreads as $thread)
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ $thread['title'] }}
+                        <span class="badge bg-primary rounded-pill">{{ $thread['count'] }} bài viết</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h5>🌟 Bài viết có sức ảnh hưởng</h5>
+            <ul class="list-group shadow-sm">
+                @foreach ($topPosts as $post)
+                    <li class="list-group-item">
+                        {!! \Illuminate\Support\Str::limit(strip_tags($post->content), 100) !!}<br>
+                        <span class="text-muted">Điểm ảnh hưởng: {{ $post->score }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h5>👨‍🏫 Người dùng ảnh hưởng nhất</h5>
+            <ul class="list-group shadow-sm">
+                @foreach ($topUsers as $user)
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ $user['name'] }}
+                        <span class="badge bg-success rounded-pill">{{ $user['score'] }} điểm</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
     </div>
 
-    {{-- Bài viết có ảnh hưởng --}}
     <div class="mt-5">
-        <h5>🌟 Bài viết có sức ảnh hưởng</h5>
-        <ul class="list-group shadow-sm">
-            @foreach ($topPosts as $post)
-                <li class="list-group-item">
-                    {!! \Illuminate\Support\Str::limit(strip_tags($post->content), 100) !!}<br>
-                    <span class="text-muted">Điểm ảnh hưởng: {{ $post->score }}</span>
-                </li>
-            @endforeach
-        </ul>
-    </div>
-
-    {{-- Người dùng ảnh hưởng --}}
-    <div class="mt-5">
-        <h5>👨‍🏫 Người dùng ảnh hưởng nhất</h5>
-        <ul class="list-group shadow-sm">
-            @foreach ($topUsers as $user)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ $user['name'] }}
-                    <span class="badge bg-success rounded-pill">{{ $user['score'] }} điểm</span>
-                </li>
-            @endforeach
-        </ul>
-    </div>
-
-    {{-- Từ khoá phổ biến dạng danh sách --}}
-    <div class="mt-5 mb-5">
         <h5>🔍 Từ khoá tâm lý phổ biến</h5>
         <ul class="list-group shadow-sm">
             @foreach ($topKeywordsRaw as $word => $count)
@@ -221,6 +193,7 @@
     </div>
 </div>
 @endsection
+
 
 @section('after_scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

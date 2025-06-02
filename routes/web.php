@@ -9,6 +9,30 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ForumSearchController;
 use App\Http\Controllers\ForumController;
+use App\Livewire\{
+    AdviceRequestForm, ScheduleManager, AdviceManageComponent, AdviceRateComponent, AdviceHistoryComponent
+};
+Route::middleware(['auth'])->group(function () {
+    // người dùng đăng ký
+    Route::get('/advice/request', AdviceRequestForm::class)
+         ->name('advice.request');
+
+    // admin + moderator quản lý
+    Route::get('/advice/manage', AdviceManageComponent::class);
+         
+
+    // moderator nhận & đặt lịch
+    Route::get('/advice/schedule', ScheduleManager::class);
+
+
+    // người dùng đánh giá sau phiên
+    Route::get('/advice/{advice}/rate', AdviceRateComponent::class)
+         ->name('advice.rate');
+    // người dùng xem lịch sử
+    Route::get('/advice/history', AdviceHistoryComponent::class)
+        ->name('advice.history');
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/vote', [ForumController::class, 'vote'])->name('posts.vote');

@@ -1,30 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<nav class="bg-blue-600 text-white shadow-md">
-    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="{{ url('/') }}" class="text-3xl font-bold flex items-center">
-            <span class="mr-2">🧠</span><span>SheZen</span>
-        </a>
-        <div class="flex items-center space-x-6">
-            <a href="{{ route('tests.index') }}" class="link">📝 Test</a>
-            <a href="{{ route('chat.show') }}" class="link">📩 Tin nhắn</a>
-            <a href="{{ route('forum.category.index') }}" class="link">💬 Forum</a>
-            @auth
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('dashboard') }}" class="link">📊 Dashboard</a>
-                @endif
-                <a href="{{ route('profile') }}" class="link">👤 Hồ sơ</a>
-                <form action="{{ route('logout') }}" method="POST" class="inline">@csrf
-                    <button class="link">Đăng xuất</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="link">🔑 Đăng nhập</a>
-                <a href="{{ route('register') }}" class="link">🆕 Đăng ký</a>
-            @endauth
-        </div>
-    </div>
-</nav>
 
 <div class="flex h-[calc(100vh-80px)] bg-gray-100">
     {{-- Sidebar --}}
