@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('moderator_id')
                   ->constrained('users')
                   ->cascadeOnDelete();
-
-            $table->timestamp('slot_start');
-            $table->timestamp('slot_end');
+            $table->date('slot_date'); // ngày cố định (ví dụ 2025-06-07)
+            $table->time('slot_time'); // giờ cố định (ví dụ 08:30:00)
+         
             $table->boolean('is_available')->default(true);
 
             // mỗi moderator không được trùng slot

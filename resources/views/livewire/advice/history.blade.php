@@ -17,6 +17,8 @@
                 <th class="p-2 border">Thời gian mong muốn</th>
                 <th class="p-2 border">Lịch hẹn</th>
                 <th class="p-2 border">Thao tác</th>
+                <th class="p-2 border">Đánh giá</th>
+                <th class="p-2 border">Hoàn thành</th>
             </tr>
         </thead>
         <tbody>

@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ModeratorSchedule extends Model
 {
-    protected $fillable = ['moderator_id','slot_start','slot_end','is_available'];
+    protected $fillable = [
+        'moderator_id',
+        'slot_date',
+        'slot_time',
+        'is_available',
+    ];
 
     public function moderator(): BelongsTo { return $this->belongsTo(User::class, 'moderator_id'); }
 

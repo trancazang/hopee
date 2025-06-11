@@ -121,5 +121,7 @@
 
     @livewireScripts
     @stack('scripts')
+    @stack('styles')
+    @vite(['resources/js/app.js'])
 </body>
 </html>

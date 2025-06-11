@@ -8,7 +8,7 @@ use App\Models\AdviceRating;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
-
+use Livewire\Redirector;
 
 class AdviceRateComponent extends Component
 {   
@@ -33,20 +33,19 @@ class AdviceRateComponent extends Component
         $this->request = $advice;
     }
 
-    public function submit(): RedirectResponse
+    public function submit()
     {
         $this->validate();
-
+    
         AdviceRating::create([
             'advice_request_id' => $this->request->id,
             'rating'            => $this->rating,
             'comment'           => $this->comment,
         ]);
-
+    
         session()->flash('success','Cảm ơn bạn đã đánh giá!');
         return redirect()->route('advice.history');
     }
-
     public function render()
     {
         return view('livewire.advice.rate');

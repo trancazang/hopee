@@ -10,19 +10,26 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ForumSearchController;
 use App\Http\Controllers\ForumController;
 use App\Livewire\{
-    AdviceRequestForm, ScheduleManager, AdviceManageComponent, AdviceRateComponent, AdviceHistoryComponent
+    AdviceRequestForm, ScheduleManager, AdviceManageComponent, AdviceRateComponent, AdviceHistoryComponent, AdviceModeratorCalendar
 };
 Route::middleware(['auth'])->group(function () {
     // người dùng đăng ký
     Route::get('/advice/request', AdviceRequestForm::class)
          ->name('advice.request');
 
-    // admin + moderator quản lý
-    Route::get('/advice/manage', AdviceManageComponent::class);
+
+Route::middleware(['auth'])->group(function () {
+    // Trang quản lý (Manage + Modal Schedule nested)
+    Route::get('/advice/manage', AdviceManageComponent::class)
+         ->name('advice.manage');
+});
+
          
 
     // moderator nhận & đặt lịch
-    Route::get('/advice/schedule', ScheduleManager::class);
+    Route::get('/advice/schedule', ScheduleManager::class)
+         ->name('advice.schedule');
+    
 
 
     // người dùng đánh giá sau phiên
@@ -32,6 +39,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/advice/history', AdviceHistoryComponent::class)
         ->name('advice.history');
 });
+    // moderator lên lịch
+    Route::get('/advice/calendar', AdviceModeratorCalendar::class)
+    ->name('advice.calendar');
+
 
 
 Route::middleware('auth')->group(function () {
