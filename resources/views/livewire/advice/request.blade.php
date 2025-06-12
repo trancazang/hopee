@@ -1,5 +1,3 @@
-@livewireStyles
-@livewireScripts
 
 <div class="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
     {{-- CỘT TRÁI: DANH SÁCH BÀI TEST --}}
