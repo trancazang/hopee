@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SheZen - Chăm sóc tinh thần</title>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -14,8 +14,8 @@
     </style>
     
 </head>
-<body class="bg-[#0d1b2a] text-white">
-<!-- Navbar -->
+<body class="bg-[#0d1b2a] text-white font-sans">
+    <!-- Navbar -->
 <nav class="bg-transparent text-white">
     <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         <!-- Logo -->
@@ -25,7 +25,7 @@
         </a>
 
         <!-- Menu items -->
-        <div class="flex space-x-6 text-sm relative">
+        <div class="flex items-center space-x-6 text-sm relative">
             <a href="{{ route('tests.index') }}" class="hover:underline">📝 Test</a>
             <a href="{{ route('chat.show') }}" class="hover:underline">📩 Tin nhắn</a>
             <a href="{{ route('forum.category.index') }}" class="hover:underline">💬 Forum</a>
@@ -52,6 +52,8 @@
                         @endif
                     </div>
                 </div>
+                <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
             @endauth
 
             <!-- Auth buttons -->

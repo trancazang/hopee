@@ -3,16 +3,17 @@
     <div id="messages" class="space-y-2">
         @if(count($messages) > 0)
             @foreach($messages as $message)
-                <div class="flex {{ $message->sender->id == auth()->id() ? 'justify-end' : 'justify-start' }}">
-                    <div class="p-2 rounded {{ $message->sender->id == auth()->id() ? 'bg-green-100' : 'bg-blue-100' }}">
-                        <strong>{{ $message->sender->getParticipantDetails()['name'] ?? 'Unknown' }}</strong>:
-                        {{ $message->body }}
-                        <div class="text-xs text-gray-500">
-                            {{ $message->created_at->format('H:i') }}
-
-                        </div>
+            <div class="flex {{ $message->sender->id == auth()->id() ? 'justify-end' : 'justify-start' }}">
+                <div class="w-2/3 p-3 rounded-lg shadow
+                    {{ $message->sender->id == auth()->id() ? 'bg-green-100' : 'bg-blue-100' }}">
+                    <strong>{{ $message->sender->getParticipantDetails()['name'] ?? 'Unknown' }}</strong>:
+                    {{ $message->body }}
+                    <div class="text-xs text-gray-500 mt-1">
+                        {{ $message->created_at->format('H:i') }}
                     </div>
                 </div>
+            </div>
+            
             @endforeach
         @else
             <p>Chưa có tin nhắn nào.</p>

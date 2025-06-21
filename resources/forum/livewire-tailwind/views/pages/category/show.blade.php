@@ -2,8 +2,11 @@
     @include ('forum::components.loading-overlay')
     @include ('forum::components.breadcrumbs')
 
-    <h1 class="mb-0 text-category">{{ $category->title }}</h1>
-    <h2 class="mt-0 text-slate-500">{{ $category->description }}</h2>
+    <div class="bg-white dark:bg-slate-800 p-6 rounded shadow mb-6">
+        <h1 class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ $category->title }}</h1>
+        <p class="mt-2 text-slate-600 dark:text-slate-300 text-sm">{{ $category->description }}</p>
+    </div>
+    
 
     <div class="flex mt-6 mb-8">
         <div class="grow">
@@ -23,10 +26,11 @@
             </div>
         @endcan
     </div>
-
-    @foreach ($category->descendants as $child)
-        <livewire:forum::components.category.card :category="$child" :key="$child->id" />
-    @endforeach
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        @foreach ($category->descendants as $child)
+            <livewire:forum::components.category.card :category="$child" :key="$child->id" />
+        @endforeach
+    </div>
 
     <div class="flex mt-6 mb-8">
         <div class="grow">
@@ -67,55 +71,40 @@
         @endif
     </div>
 
-    <div x-show="selectedThreads.length > 0" class="fixed bottom-0 right-0 z-40 min-w-96 bg-white shadow-md rounded-md m-4 p-6 dark:bg-slate-700">
-        <h3>{{ trans('forum::general.with_selection') }}</h3>
-
-        <x-forum::form.input-select
-            id="selected-action"
-            x-model="selectedAction">
-                <option value="none" disabled>{{ trans_choice('forum::general.actions', 1) }}...</option>
-            @can ('deleteThreads', $category)
-                <option value="delete">{{ trans('forum::general.delete') }}</option>
-            @endcan
-            @can ('restoreThreads', $category)
-                <option value="restore">{{ trans('forum::general.restore') }}</option>
-            @endcan
-            @can ('moveThreadsFrom', $category)
-                <option value="move">{{ trans('forum::general.move') }}</option>
-            @endcan
-            @can ('lockThreads', $category)
-                <option value="lock">{{ trans('forum::threads.lock') }}</option>
-                <option value="unlock">{{ trans('forum::threads.unlock') }}</option>
-            @endcan
-            @can ('pinThreads', $category)
-                <option value="pin">{{ trans('forum::threads.pin') }}</option>
-                <option value="unpin">{{ trans('forum::threads.unpin') }}</option>
-            @endcan
-        </x-forum::form.input-select>
-
-        @if (config('forum.general.soft_deletes'))
-            <x-forum::form.input-checkbox
-                id="permadelete"
-                value=""
-                :label="trans('forum::general.perma_delete')"
-                x-show="selectedAction == 'delete'"
-                x-model="permadelete" />
-        @endif
-
-        <x-forum::form.input-select
-            id="destination-category"
-            :label="trans_choice('forum::categories.category', 1)"
-            x-show="selectedAction == 'move'"
-            x-model="destinationCategory">
-            <option value="0" disabled>...</option>
-            @include ('forum::components.category.options', ['categories' => $threadDestinationCategories, 'disable' => $category->id])
-        </x-forum::form.input-select>
-
-        <x-forum::button
-            :label="trans('forum::general.proceed')"
-            @click="applySelectedAction"
-            x-bind:disabled="selectedAction == 'none' || selectedAction == 'move' && destinationCategory == 0" />
+    <div x-show="selectedThreads.length > 0" class="fixed bottom-4 right-4 z-50 w-full max-w-md bg-white dark:bg-slate-700 rounded-lg shadow-lg p-6">
+        <h3 class="font-medium text-slate-800 dark:text-white mb-3">
+            {{ trans('forum::general.with_selection') }}
+        </h3>
+    
+        <div class="space-y-2">
+            <x-forum::form.input-select id="selected-action" x-model="selectedAction" class="w-full" />
+            
+            @if (config('forum.general.soft_deletes'))
+                <x-forum::form.input-checkbox
+                    id="permadelete"
+                    value=""
+                    :label="trans('forum::general.perma_delete')"
+                    x-show="selectedAction == 'delete'"
+                    x-model="permadelete" />
+            @endif
+    
+            <x-forum::form.input-select
+                id="destination-category"
+                x-show="selectedAction == 'move'"
+                x-model="destinationCategory"
+                :label="trans_choice('forum::categories.category', 1)">
+                <option value="0" disabled>...</option>
+                @include ('forum::components.category.options', ['categories' => $threadDestinationCategories, 'disable' => $category->id])
+            </x-forum::form.input-select>
+    
+            <x-forum::button
+                class="w-full"
+                :label="trans('forum::general.proceed')"
+                @click="applySelectedAction"
+                x-bind:disabled="selectedAction == 'none' || (selectedAction == 'move' && destinationCategory == 0)" />
+        </div>
     </div>
+    
 
     {{ $threads->links('forum::components.pagination') }}
 </div>

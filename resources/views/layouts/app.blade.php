@@ -18,88 +18,63 @@
 
 
 <body class="bg-slate-200 dark:bg-slate-800">
-   {{-- Navbar --}}
-   <div x-data="{
-    isMenuCollapsed: true,
-    isUserDropdownCollapsed: true,
-
-    toggleMenu() {
-        this.isMenuCollapsed = !this.isMenuCollapsed;
-    },
-    toggleUserDropdown() {
-        this.isUserDropdownCollapsed = !this.isUserDropdownCollapsed;
-    },
-    closeUserDropdown() {
-        this.isUserDropdownCollapsed = true;
-    },
-    closeMenu() {
-        this.isMenuCollapsed = true;
-    }
-}">
-    <div class="bg-white shadow-md border-b border-slate-100 dark:bg-slate-800 dark:border-slate-700 dark:shadow-none" @click.outside="closeMenu">
-        <div class="container mx-auto p-4">
-            <div class="flex flex-col md:flex-row flex-wrap items-center justify-between">
-                <div class="flex w-full md:w-auto items-center justify-between">
-                    <div class="grow">
-                        <a href="/" class="text-lg font-medium">{{ config('app.name') }}</a>
-                    </div>
-                    <button type="button" class="md:hidden inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600" @click="toggleMenu">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 17 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="w-full md:w-auto md:block font-medium flex flex-col items-center justify-between mt-4 md:mt-0 md:flex-row rtl:space-x-reverse text-center" :class="{ hidden: isMenuCollapsed }">
-                    <span class="w-full md:w-auto">
-                        <a href="{{ route('forum.category.index') }}" class="block hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent md:inline dark:md:inline">{{ trans('forum::general.home_title') }}</a>
-                    </span>
-                    <span class="w-full md:w-auto">
-                        <a href="{{ route('forum.recent') }}" class="block hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent md:inline">{{ trans('forum::threads.recent') }}</a>
-                    </span>
-                    @auth
-                        <span class="w-full md:w-auto">
-                            <a href="{{ route('forum.unread') }}" class="block hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent md:inline">{{ trans('forum::threads.unread_updated') }}</a>
-                        </span>
-                    @endauth
-                    @can ('moveCategories')
-                        <span class="w-full md:w-auto">
-                            <a href="{{ route('forum.category.order') }}" class="block hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent md:inline">{{ trans('forum::general.manage') }}</a>
-                        </span> 
-                    @endcan
-                    @if (Auth::check())
-                    <span class="relative w-full md:w-auto" @click.outside="closeUserDropdown">
-                        <a class="block flex flex-row items-center place-content-center gap-1 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent w-full md:w-auto md:inline" href="#" id="navbarDropdownMenuLink" @click="toggleUserDropdown">
-                            {{ auth()->user()->name }}                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline w-3 h-3">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+      <nav class="bg-transparent text-black">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center bg-[#0d1b2a] text-white">
+            <!-- Logo -->
+            <a href="{{ url('/welcome') }}" class="text-2xl font-bold flex items-center gap-2">
+                <img src="/storage/images/moon-logo.png" alt="Logo" class="w-8 h-8">
+                <span>SheZen</span>
+            </a>
+    
+            <!-- Menu items -->
+            <div class="flex items-center space-x-6 text-sm relative">
+                <a href="{{ route('tests.index') }}" class="hover:underline">📝 Test</a>
+                <a href="{{ route('chat.show') }}" class="hover:underline">📩 Tin nhắn</a>
+                <a href="{{ route('forum.category.index') }}" class="hover:underline">💬 Forum</a>
+    
+                @auth
+                    <!-- Trigger + Dropdown -->
+                    <div class="relative" x-data="{ openAdvice: false }" @click.outside="openAdvice = false" wire:ignore>
+                        <a href="#" @click.prevent="openAdvice = !openAdvice"
+                           class="inline-flex items-center gap-1 hover:underline px-2 py-1">
+                            Tư vấn
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </a>
-                        <div class="absolute right-0 left-0 md:left-auto w-auto md:w-44 divide-y border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 rounded-md" :class="{ hidden: isUserDropdownCollapsed }" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="block px-4 py-2" href="#" @click.prevent="logout">
-                                {{ __('Log out') }}
-                            </a>
+    
+                        <div x-show="openAdvice" x-transition x-cloak
+                             class="absolute left-0 mt-2 w-56 bg-white dark:bg-slate-700 text-slate-700 dark:text-white border border-slate-200 dark:border-slate-600 rounded shadow-md z-50">
+                            <a href="{{ route('advice.request') }}" class="block px-4 py-2 text-sm hover:bg-pink-50 dark:hover:bg-slate-600">Đăng kí tư vấn</a>
+                            <a href="{{ route('advice.history') }}" class="block px-4 py-2 text-sm hover:bg-pink-50 dark:hover:bg-slate-600">Lịch sử tư vấn</a>
+                            @if(in_array(auth()->user()->role, ['moderator', 'admin']))
+                                <a href="{{ route('advice.manage') }}" class="block px-4 py-2 text-sm hover:bg-pink-50 dark:hover:bg-slate-600"> Quản lý yêu cầu</a>
+                                <a href="{{ route('advice.schedule') }}" class="block px-4 py-2 text-sm hover:bg-pink-50 dark:hover:bg-slate-600">Tiếp nhận yêu cầu</a>
+                                <a href="{{ route('advice.calendar') }}" class="block px-4 py-2 text-sm hover:bg-pink-50 dark:hover:bg-slate-600">Đăng ký lịch</a>
+                            @endif
                         </div>
-                    </span>
+                    </div>
+                    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+                @endauth
+    
+                <!-- Auth buttons -->
+                @auth
+                    @if(in_array(auth()->user()->role, ['admin']))
+                        <a href="{{ route('backpack.dashboard') }}" class="hover:underline">📊 Dashboard</a>
+                    @endif
+                    <a href="{{ route('profile') }}" class="hover:underline">👤 Hồ sơ</a>
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="hover:underline">Đăng xuất</button>
+                    </form>
                 @else
-                    <span class="w-full md:w-auto">
-                        <a href="{{ url('/login') }}" class="block hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent md:inline">
-                            {{ __('Đăng nhập') }}
-                        </a>
-                    </span>
-                    <span class="w-full md:w-auto">
-                        <a href="{{ url('/register') }}" class="block hover:bg-slate-100 dark:hover:bg-slate-600 rounded-md px-4 py-2 md:hover:bg-transparent md:dark:hover:bg-transparent md:inline">
-                            {{ __('Đăng kí') }}
-                        </a>
-                    </span>
-                @endif
-                </div>
-                <form method="GET" action="{{ route('forum.search') }}" class="flex items-center gap-2 mt-4 md:mt-0">
-                    <input type="text" name="q" placeholder="Tìm kiếm..." class="border rounded px-3 py-1">
-                    <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded">Tìm</button>
-                </form>
+                    <a href="{{ route('login') }}" class="hover:underline">🔑 Đăng nhập</a>
+                    <a href="{{ route('register') }}" class="hover:underline">🆕 Đăng ký</a>
+                @endauth
             </div>
         </div>
-    </div>
-</div>
+    </nav>
 
         <!-- Page Heading -->
         @if (isset($header))
@@ -119,9 +94,7 @@
         </main>
     </div>
 
-    @livewireScripts
     @stack('scripts')
     @stack('styles')
-    @vite(['resources/js/app.js'])
 </body>
 </html>

@@ -44,6 +44,10 @@ class AppServiceProvider extends ServiceProvider
         app()->bind(PackagePostAuth::class, function () {
             return new AppPostAuth();
         });
+        view()->composer('*', function ($view) {
+            $recentThreads = Thread::latest()->limit(6)->with('category')->get();
+            $view->with('recentThreads', $recentThreads);
+        });
         
     }
 

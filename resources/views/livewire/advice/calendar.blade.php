@@ -7,6 +7,12 @@
         </div>
     @endif
 
+    @if (session()->has('error'))
+        <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <form wire:submit.prevent="save" class="space-y-4">
         <div>
             <label>Ngày:</label>
@@ -16,7 +22,7 @@
 
         <div>
             <label class="block mb-1 font-medium">Chọn giờ:</label>
-            
+
             {{-- Giờ mặc định --}}
             <div class="flex flex-wrap gap-2 mb-2">
                 @foreach (['08:00', '09:00', '10:00', '14:00', '15:00', '16:00', '18:00', '19:00','20:00'] as $preset)
@@ -29,12 +35,11 @@
                     </button>
                 @endforeach
             </div>
-        
+
             {{-- Giờ tuỳ chỉnh --}}
             <input type="time" wire:model="slot_time" class="form-input w-full">
             @error('slot_time') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
         </div>
-        
 
         <div>
             <label class="inline-flex items-center">
@@ -56,6 +61,7 @@
                 <th class="px-4 py-2">Ngày</th>
                 <th class="px-4 py-2">Giờ</th>
                 <th class="px-4 py-2">Trạng thái</th>
+                <th class="px-4 py-2">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -70,10 +76,20 @@
                             <span class="text-red-600">❌ Không sẵn sàng</span>
                         @endif
                     </td>
+                    <td class="px-4 py-2">
+                        @if ($slot->is_available)
+                            <button wire:click="cancelAvailability({{ $slot->id }})"
+                                class="text-sm text-red-600 hover:underline">
+                                Huỷ
+                            </button>
+                        @else
+                            <span class="text-gray-400">---</span>
+                        @endif
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="3" class="px-4 py-2 text-center text-gray-500">Chưa có lịch nào.</td>
+                    <td colspan="4" class="px-4 py-2 text-center text-gray-500">Chưa có lịch nào.</td>
                 </tr>
             @endforelse
         </tbody>

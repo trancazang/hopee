@@ -53,14 +53,14 @@
         @if ($availableDates)
             <div class="mb-6">
                 <label class="block font-semibold text-gray-700 mb-2">2. Chọn ngày hẹn:</label>
-                <input
-                    type="date"
-                    wire:model="selectedDate"
-                    wire:change="loadSlots"
-                    class="border border-pink-300 px-4 py-2 rounded w-full focus:ring-pink-400 focus:border-pink-400"
-                    min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}"
-                    max="{{ collect($availableDates)->max() }}"
-                />
+                <select wire:model="selectedDate" wire:change="loadSlots"
+                        class="w-full border border-pink-300 px-4 py-2 rounded">
+                    <option value="">-- Chọn ngày --</option>
+                    @foreach ($availableDates as $date)
+                        <option value="{{ $date }}">{{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</option>
+                    @endforeach
+                </select>
+
             </div>
         @endif
 

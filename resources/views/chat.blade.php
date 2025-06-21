@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="flex h-[calc(100vh-80px)] bg-gray-100">
+<div class="container mx-auto px-4 flex h-[calc(100vh-80px)] bg-gray-100">
     {{-- Sidebar --}}
     <aside class="w-1/3 max-w-xs bg-white border-r flex flex-col">
         <div class="p-4 border-b"><h2 class="text-xl font-bold">Tin nhắn</h2></div>

@@ -15,7 +15,9 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "@alpinejs/focus": "^3.14.9",
         "@melloware/coloris": "^0.24.0",
+        "alpinejs": "^3.14.9",
         "date-fns": "^4.1.0",
         "nested-sort": "^5.2.0"
     }

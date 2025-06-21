@@ -4,7 +4,7 @@
 
     <h1 class="mb-0">{{ $thread->title }}</h1>
 
-    <div class="flex items-center mt-4 mb-6">
+    <div class="flex flex-wrap gap-2 mt-4 mb-6">
         <div class="grow">
             @if ($thread->pinned)
                 <livewire:forum::components.pill

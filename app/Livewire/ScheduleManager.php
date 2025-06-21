@@ -19,6 +19,8 @@ class ScheduleManager extends Component
     public string $scheduled_at = '';
     public string $meeting_link = '';
     public $scheduled = [];
+    public ?string $successMessage = null;
+
     /* Nhận yêu cầu */
     
     public function accept(int $id): void
@@ -34,48 +36,51 @@ class ScheduleManager extends Component
     /* Lưu lịch */
     public function saveSchedule(): void
     {
-        // 1. Validate dữ liệu
         $this->validate([
-            'scheduled_at' => ['required', 'date', 'after:now'],
+            'scheduled_at' => ['required', 'date', 'after:today'],
             'meeting_link' => ['required', 'url'],
         ], [
-            'meeting_link.required' => 'Vui lòng nhập link cuộc họp.',
-            'meeting_link.url'      => 'Link cuộc họp phải là URL hợp lệ.',
+            'scheduled_at.after' => 'Ngày đặt lịch phải lớn hơn ngày hôm nay.',
+            'scheduled_at.required' => 'Vui lòng chọn ngày giờ.',
         ]);
-
-        // 2. Lấy bản ghi AdviceRequest từ DB
+    
         $req = AdviceRequest::findOrFail($this->requestId);
-
-        // 3. Kiểm tra lịch trùng cho moderator này (nếu cần)
+    
         $exists = AdviceRequest::where('moderator_id', Auth::id())
-                    ->where('scheduled_at', Carbon::parse($this->scheduled_at))
-                    ->exists();
-
+            ->where('scheduled_at', Carbon::parse($this->scheduled_at))
+            ->where('status', '!=', AdviceRequest::PENDING)
+            ->exists();
+    
         if ($exists) {
-            $this->addError('scheduled_at', 'Trùng lịch! Hãy chọn thời gian khác.');
+            $this->addError('scheduled_at', message: 'Trùng lịch! Hãy chọn thời gian khác.');
             return;
         }
-
-        // 4. Cập nhật đầy đủ trường moderator, scheduled_at, meeting_link, status
+    
         $req->update([
             'moderator_id'  => Auth::id(),
             'scheduled_at'  => $this->scheduled_at,
             'meeting_link'  => $this->meeting_link,
             'status'        => AdviceRequest::SCHEDULED,
         ]);
-
-        // 5. Gọi notifier (sau khi đã lưu xong meeting_link và scheduled_at)
+    
+        ModeratorSchedule::where('moderator_id', Auth::id())
+            ->where('slot_date', Carbon::parse($this->scheduled_at)->toDateString())
+            ->where('slot_time', Carbon::parse($this->scheduled_at)->format('H:i'))
+            ->update(['is_available' => false]);
+    
         try {
             app(AdviceRequestNotifier::class)->notify($req);
-            Log::info("ScheduleManager: Đã gửi email & chat cho request_id={$req->id}");
         } catch (\Throwable $e) {
-            Log::error("ScheduleManager: Lỗi khi notify: " . $e->getMessage());
+            Log::error("Lỗi gửi thông báo: " . $e->getMessage());
         }
-
-        // 6. Flash message và reset state để trở lại list
-        session()->flash('success', 'Đã đặt lịch thành công và gửi thông báo!');
-        $this->reset(['mode', 'requestId', 'scheduled_at', 'meeting_link']);
+    
+        unset($this->requestId, $this->scheduled_at, $this->meeting_link);
+        $this->successMessage = ' Đã đặt lịch thành công và gửi thông báo đến người yêu cầu!';
+        $this->mode = 'list';
+    
     }
+    
+    
     protected $listeners = [
         'openScheduleModal'
     ];

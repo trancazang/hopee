@@ -77,9 +77,11 @@
     </div>
 
     {{-- Nội dung chính --}}
-    <div class="container mx-auto mt-10 p-6 bg-white rounded-lg shadow">
-        <h2 class="text-2xl font-bold mb-6">🔍 Kết quả tìm kiếm cho: "<span class="text-blue-600">{{ $term }}</span>"</h2>
-
+    <div class="max-w-5xl mx-auto mt-10 px-6 py-8 bg-white dark:bg-slate-800 rounded-xl shadow-lg">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-4">
+            🔍 Kết quả cho: 
+            <span class="text-blue-600 dark:text-blue-400">"{{ $term }}"</span>
+        </h1>
         <div class="mb-8">
             <h3 class="text-xl font-semibold text-gray-700 mb-3">🧵 Chủ đề</h3>
             <ul class="list-disc list-inside space-y-2">
