@@ -46,12 +46,13 @@ class AdviceRequestForm extends Component
             logger("🧑 Selected moderator_id = $id");
 
             $this->availableDates = ModeratorSchedule::where('moderator_id', $id)
-                ->where('is_available', true)
-                ->pluck('slot_date')
-                ->map(fn($d) => Carbon::parse($d)->format('Y-m-d'))
-                ->unique()
-                ->values()
-                ->all();
+            ->where('is_available', true)
+            ->whereDate('slot_date', '>', Carbon::today()) // chỉ lấy ngày lớn hơn hôm nay
+            ->pluck('slot_date')
+            ->map(fn($d) => Carbon::parse($d)->format('Y-m-d'))
+            ->unique()
+            ->values()
+            ->all();
 
             logger("📆 Available Dates", $this->availableDates);
         }
@@ -59,25 +60,30 @@ class AdviceRequestForm extends Component
     public function loadSlots()
     {
         if (!$this->moderator_id || !$this->selectedDate) return;
-    
+
         logger("📅 Người dùng chọn: {$this->selectedDate}");
         logger("🧑 Moderator ID đang được chọn: {$this->moderator_id}");
-    
+
         $raw = ModeratorSchedule::where('moderator_id', $this->moderator_id)
             ->where('slot_date', $this->selectedDate)
             ->get();
-    
+
         logger("🔧 Raw slot schedules", $raw->toArray());
-    
+
         $this->slots = $raw->map(function ($slot) {
             return [
                 'time' => Carbon::parse($slot->slot_time)->format('H:i'),
                 'is_available' => $slot->is_available,
             ];
         })->toArray();
-    
+
+        if (empty($this->slots)) {
+            session()->flash('no_slots', 'Hiện tại moderator chưa có lịch tư vấn vào ngày này.');
+        }
+
         logger("✅ Slot đã load", $this->slots);
     }
+
     
 
 

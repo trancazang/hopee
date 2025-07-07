@@ -62,7 +62,10 @@
                 </select>
 
             </div>
+            @else
+            <p class="text-gray-500">Hiện tại moderator chưa có lịch tư vấn sắp tới.</p>
         @endif
+      
 
         {{-- 3. Chọn khung giờ --}}
         @if ($slots)
