@@ -12,6 +12,8 @@ use App\Http\Controllers\ForumController;
 use App\Livewire\{
     AdviceRequestForm, ScheduleManager, AdviceManageComponent, AdviceRateComponent, AdviceHistoryComponent, AdviceModeratorCalendar
 };
+use App\Http\Controllers\ChatbotController;
+
 Route::middleware(['auth'])->group(function () {
     // người dùng đăng ký
     Route::get('/advice/request', AdviceRequestForm::class)
@@ -134,5 +136,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::put('/tests/{test}', [AdminTestController::class, 'update'])->name('admin.tests.update');
     Route::delete('/tests/{test}', [AdminTestController::class, 'destroy'])->name('admin.tests.destroy');
 });
-
+// routes/web.php
+Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
+Route::post('/chatbot/setup', [ChatbotController::class, 'setup'])->name('chatbot.setup');
 require __DIR__.'/auth.php';

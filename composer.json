@@ -10,6 +10,7 @@
         "backpack/theme-tabler": "^1.2",
         "kalnoy/nestedset": "v6.x-dev",
         "laravel/framework": "^11.0",
+        "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.6",
         "livewire/volt": "^1.0",

@@ -104,8 +104,6 @@
                 x-bind:disabled="selectedAction == 'none' || (selectedAction == 'move' && destinationCategory == 0)" />
         </div>
     </div>
-    
-
     {{ $threads->links('forum::components.pagination') }}
 </div>
 
