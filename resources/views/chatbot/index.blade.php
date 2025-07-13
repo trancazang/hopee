@@ -1,134 +1,174 @@
-
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Bot Tư Vấn Tâm Lý</h4>
-                    <button id="setupBtn" class="btn btn-sm btn-warning">Thiết lập Database</button>
+<div class="fixed bottom-6 right-6 z-50">
+    {{-- Nút bật / tắt khung chat --}}
+    <button id="toggleChat"
+            class="bg-gradient-to-r from-teal-500 to-emerald-500 text-white p-3 rounded-full shadow-lg focus:outline-none">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    {{-- Khung chat --}}
+    <div id="chatWrapper"
+         class="hidden w-80 sm:w-96 bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
+        {{-- Header --}}
+        <div class="flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-500 px-4 py-3 text-white">
+            <h5 class="font-semibold flex items-center gap-2">
+                <i class="fas fa-robot text-xl"></i> Tư Vấn Tâm Lý
+            </h5>
+            @if(optional(auth()->user())->role && in_array(auth()->user()->role, ['moderator','admin']))
+            <button id="setupBtn"
+                    class="text-white/80 hover:text-white text-lg flex items-center gap-1"
+                    title="Thiết lập database">
+                <i class="fas fa-database"></i> <span>Thiết lập DB</span>
+            </button>
+        @endif
+
+            <button id="collapseChat" class="text-white/70 hover:text-white text-lg">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        {{-- Nội dung chat --}}
+        <div id="chatContainer"
+             class="flex-1 px-4 py-3 space-y-3 overflow-y-auto bg-gray-50" style="max-height: 320px">
+            {{-- Lời chào khởi đầu --}}
+            <div class="flex items-start gap-2">
+                <i class="fas fa-robot text-emerald-600 mt-1"></i>
+                <div class="bg-emerald-100 text-gray-800 rounded-lg px-3 py-2 text-sm leading-relaxed">
+                    <h6 class="font-semibold mb-1">👋 Xin chào!</h6>
+                    <p>Tôi là <strong>Bot Tư Vấn Tâm Lý</strong>.<br>
+                       Bạn đang lo lắng điều gì? Hãy chia sẻ nhé!</p>
                 </div>
-                <div class="card-body">
-                    <div id="chatContainer" style="height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;">
-                        <div class="message bot-message">
-                            <strong>Bot:</strong> Xin chào! Tôi là bot tư vấn tâm lý. Tôi có thể giúp bạn điều gì?
-                        </div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <input type="text" id="messageInput" class="form-control" placeholder="Nhập tin nhắn của bạn...">
-                        <button id="sendBtn" class="btn btn-primary">Gửi</button>
-                    </div>
-                </div>
+            </div>
+        </div>
+
+        {{-- Ô nhập --}}
+        <div class="border-t bg-white p-3">
+            <div class="flex gap-2">
+                <input id="messageInput"
+                       class="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                       placeholder="Nhập tin nhắn..." autocomplete="off">
+                <button id="sendBtn"
+                        class="bg-emerald-500 hover:bg-emerald-600 text-white rounded-full w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-.message {
-    margin-bottom: 10px;
-    padding: 8px;
-    border-radius: 5px;
-}
-.user-message {
-    background-color: #e3f2fd;
-    text-align: right;
-}
-.bot-message {
-    background-color: #f1f8e9;
-}
-.loading {
-    font-style: italic;
-    color: #666;
-}
-</style>
+@push('styles')
+    {{-- Font Awesome (CDN) --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+@endpush
 
+@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
+    const chatWrapper   = document.getElementById('chatWrapper');
+    const toggleBtn     = document.getElementById('toggleChat');
+    const collapseBtn   = document.getElementById('collapseChat');
     const chatContainer = document.getElementById('chatContainer');
-    const messageInput = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const setupBtn = document.getElementById('setupBtn');
-    
-    function addMessage(message, isUser = false) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-        messageDiv.innerHTML = `<strong>${isUser ? 'Bạn' : 'Bot'}:</strong> ${message}`;
-        chatContainer.appendChild(messageDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-    
-    function sendMessage() {
-        const message = messageInput.value.trim();
-        if (!message) return;
-        
-        addMessage(message, true);
-        messageInput.value = '';
-        
-        // Hiển thị loading
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = 'message bot-message loading';
-        loadingDiv.innerHTML = '<strong>Bot:</strong> Đang suy nghĩ...';
-        chatContainer.appendChild(loadingDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-        
-        // Gửi request
-        fetch('/chatbot/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ message: message })
-        })
-        .then(response => response.json())
-        .then(data => {
-            chatContainer.removeChild(loadingDiv);
-            
-            if (data.status === 'success') {
-                addMessage(data.response);
-            } else {
-                addMessage('Xin lỗi, tôi đang gặp vấn đề kỹ thuật: ' + data.message);
-            }
-        })
-        .catch(error => {
-            chatContainer.removeChild(loadingDiv);
-            addMessage('Lỗi kết nối. Vui lòng thử lại.');
-        });
-    }
-    
-    sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
+    const messageInput  = document.getElementById('messageInput');
+    const sendBtn       = document.getElementById('sendBtn');
+    const setupBtn      = document.getElementById('setupBtn');   
+
+    // Ẩn / hiện khung chat
+    toggleBtn.addEventListener('click', () => chatWrapper.classList.toggle('hidden'));
+    collapseBtn.addEventListener('click', () => chatWrapper.classList.add('hidden'));
+
+    // Thêm tin nhắn mới vào khung
+    function addMessage(html, isUser = false) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `flex ${isUser ? 'justify-end' : 'items-start gap-2'}`;
+
+        // bubble
+        const bubble = document.createElement('div');
+        bubble.className = `${isUser
+            ? 'bg-teal-500 text-white'
+            : 'bg-emerald-100 text-gray-800'} rounded-lg px-3 py-2 text-sm leading-relaxed max-w-[75%]`;
+
+        bubble.innerHTML = html;
+        if (!isUser) {
+            wrapper.insertAdjacentHTML('afterbegin', '<i class="fas fa-robot text-emerald-600 mt-1"></i>');
         }
-    });
-    
-    setupBtn.addEventListener('click', function() {
-        setupBtn.disabled = true;
-        setupBtn.textContent = 'Đang thiết lập...';
-        
-        fetch('/chatbot/setup', {
-            method: 'POST',
+        wrapper.appendChild(bubble);
+        chatContainer.appendChild(wrapper);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function sendMessage() {
+        const text = messageInput.value.trim();
+        if (!text) return;
+
+        // Người dùng
+        addMessage(`<p>${text}</p>`, true);
+        messageInput.value = '';
+
+        // Loader
+        const loader = document.createElement('div');
+        loader.className = 'flex items-start gap-2 loader';
+        loader.innerHTML =
+            '<i class="fas fa-robot text-emerald-600 mt-1"></i>' +
+            '<div class="bg-emerald-50 text-emerald-700 rounded-lg px-3 py-2 text-sm italic">Đang trả lời…</div>';
+        chatContainer.appendChild(loader);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        // Gọi API
+        fetch('/chatbot/chat', {
+            method : 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                'Content-Type' : 'application/json',
+                'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').content
+            },
+            body   : JSON.stringify({message: text})
+        })
+        .then(r => r.json())
+        .then(d => {
+            loader.remove();
+            if (d.status === 'success') {
+                /* Ở đây bot được phép trả về HTML có xuống hàng <br>, tiêu đề <h6>, v‑v */
+                addMessage(d.response);
+            } else {
+                addMessage(`<p>⚠️ Xin lỗi, tôi đang gặp lỗi kỹ thuật:<br>${d.message}</p>`);
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            setupBtn.disabled = false;
-            setupBtn.textContent = 'Thiết lập Database';
-        })
-        .catch(error => {
-            alert('Lỗi khi thiết lập database');
-            setupBtn.disabled = false;
-            setupBtn.textContent = 'Thiết lập Database';
+        .catch(() => {
+            loader.remove();
+            addMessage('<p>⚠️ Lỗi kết nối, vui lòng thử lại.</p>');
         });
-    });
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keydown', e => e.key === 'Enter' && sendMessage());
+
+    if (setupBtn) {
+        setupBtn.addEventListener('click', function () {
+            setupBtn.disabled = true;
+            setupBtn.textContent = 'Đang thiết lập...';
+
+            fetch('/chatbot/setup', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document
+                        .querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                setupBtn.disabled = false;
+                setupBtn.textContent = 'Thiết lập Database';
+            })
+            .catch(() => {
+                alert('Lỗi khi thiết lập database');
+                setupBtn.disabled = false;
+                setupBtn.textContent = 'Thiết lập Database';
+            });
+        });
+    }
 });
 </script>
+@endpush
 @endsection
