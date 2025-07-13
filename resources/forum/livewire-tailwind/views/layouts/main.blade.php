@@ -87,13 +87,7 @@
            
         </div>
    
-        <a href="{{ route('chat.show') }}"
-        class="fixed bottom-6 right-6 bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-full shadow-lg">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.883L3 20l1.117-4.487A7.96 7.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-        </svg>
-        </a>
+        
         <div class="bg-blue shadow-md border-b border-slate-300 dark:bg-slate-800 dark:border-slate-700 dark:shadow-none" @click.outside="closeMenu">
             <div x-data="{ sidebarOpen: true }" class="max-w-7xl mx-auto px-4 py-6">
                 <!-- Nút toggle sidebar -->
@@ -135,8 +129,20 @@
                 </div>
             </div>                     
         </div>
-        
-                
+        <x-mini-chat />
+
+    {{-- Các stack để mini‑chat tự đổ CSS/JS (nếu trong component có @push) --}}
+    @stack('styles')
+    @stack('scripts')
+ {{-- Nút “Tin nhắn riêng” lệch 14 px sang trái --}}
+    <a href="{{ route('chat.show') }}"
+    class="fixed bottom-6 right-20   {{-- 👈 đổi right‑6 → right‑20 --}}
+        bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-full shadow-lg">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.883L3 20l1.117-4.487A7.96 7.96 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+    </svg>
+    </a>
         <livewire:forum::components.alerts />
         <script type="module">
             document.addEventListener('alpine:init', () => {

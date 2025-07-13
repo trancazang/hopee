@@ -135,5 +135,11 @@
     <script>
         AOS.init({ once: true });
     </script>
+        <x-mini-chat />
+
+        {{-- Các stack để mini‑chat tự đổ CSS/JS (nếu trong component có @push) --}}
+        @stack('styles')
+        @stack('scripts')   
+
 </body>
 </html>

@@ -92,8 +92,9 @@
             {{-- Nếu dùng component slot --}}
             {{ $slot ?? '' }}
         </main>
-    </div>
+        <x-mini-chat />
 
+    </div>
     @stack('scripts')
     @stack('styles')
 </body>
