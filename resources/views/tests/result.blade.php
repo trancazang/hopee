@@ -32,7 +32,7 @@
                 @if ($result->advice)
                     <div class="mt-8 p-6 bg-green-100 rounded-lg shadow-md border-l-4 border-green-500">
                         <h3 class="text-xl font-bold text-green-700">🧑‍⚕️ Gợi ý tư vấn</h3>
-                        <p class="text-gray-800 mt-2">{{ $result->advice }}</p>
+                        <p class="text-gray-800 mt-2">{!! $result->advice !!}</p>
                     </div>
                 @endif
 
