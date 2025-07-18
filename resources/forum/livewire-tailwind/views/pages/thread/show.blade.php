@@ -3,7 +3,7 @@
     @include ('forum::components.breadcrumbs')
 
     <h1 class="mb-0">{{ $thread->title }}</h1>
-
+       
     <div class="flex flex-wrap gap-2 mt-4 mb-6">
         <div class="grow">
             @if ($thread->pinned)
@@ -161,8 +161,12 @@
             <h2>{{ trans('forum::general.quick_reply') }}</h2>
 
             <div class="bg-white rounded-md shadow-md p-6 mt-4 dark:bg-slate-700">
-                <x-forum::form.input-textarea wire:model="threadReplyForm.content" />
-
+                <x-forum::form.input-textarea
+                id="content"
+                wire:model.defer="threadReplyForm.content"
+                :label="__('Nội dung')"
+                rich="true" />
+            
                 <div class="text-right mt-6">
                     <x-forum::button :label="trans('forum::general.reply')" @click="reply" />
                 </div>
@@ -221,7 +225,7 @@
                 @include ('forum::components.category.options', ['categories' => $threadDestinationCategories, 'disable' => $thread->category->id])
             </x-forum::form.input-select>
         </div>
-
+        
         <div class="flex flex-wrap mt-6">
             <div class="grow">
                 <x-forum::link-button

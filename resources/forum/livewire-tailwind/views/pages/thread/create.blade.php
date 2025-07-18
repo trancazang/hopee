@@ -14,10 +14,14 @@
                         :label="trans('forum::general.title')"
                         wire:model="title" />
 
-                    <x-forum::form.input-textarea
+                        <x-forum::form.input-textarea
                         id="content"
-                        wire:model="content" />
+                        wire:model.defer="content"
+                        label="Nội dung"
+                        rich="true" />
+                        <input type="hidden" id="content_hidden" name="content">
 
+                    
                     <div class="flex mt-6">
                         <div class="grow">
                             <x-forum::button

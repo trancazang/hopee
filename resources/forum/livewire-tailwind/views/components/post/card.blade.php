@@ -18,11 +18,12 @@
             @endif
 
             {{-- Nội dung bài viết --}}
-            <div class="dark:text-slate-100 mb-4">
+            <div class="dark:text-slate-100 mb-4 prose prose-lg max-w-none dark:prose-invert">
                 @if ($post->trashed())
                     @can ('viewTrashedPosts')
                         <div class="mb-4">
-                            {!! Forum::render($post->content) !!}
+                            {{-- Sử dụng {!! !!} để render HTML từ rich text editor --}}
+                            {!! $post->content !!}
                         </div>
                     @endcan
 
@@ -35,10 +36,10 @@
                             :text="trans('forum::general.deleted')" />
                     </div>
                 @else
-                    {!! Forum::render($post->content) !!}
+                    {{-- Render HTML content trực tiếp --}}
+                    {!! $post->content !!}
                 @endif
             </div>
-
             {{-- Các nút vote, báo cáo, checkbox --}}
             @php
                 $userVote = \App\Models\ForumPostVote::where('post_id', $post->id)
