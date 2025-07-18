@@ -72,18 +72,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatContainer = document.getElementById('chatContainer');
     const messageInput  = document.getElementById('messageInput');
     const sendBtn       = document.getElementById('sendBtn');
-    const setupBtn      = document.getElementById('setupBtn');   
+    const setupBtn      = document.getElementById('setupBtn');
+
+    // 👉 Gọi lại lịch sử chat ngay khi trang load
+    loadChatHistory();
 
     // Ẩn / hiện khung chat
-    toggleBtn.addEventListener('click', () => chatWrapper.classList.toggle('hidden'));
+    toggleBtn.addEventListener('click', () => {
+        chatWrapper.classList.toggle('hidden');
+    });
+
     collapseBtn.addEventListener('click', () => chatWrapper.classList.add('hidden'));
 
-    // Thêm tin nhắn mới vào khung
     function addMessage(html, isUser = false) {
         const wrapper = document.createElement('div');
         wrapper.className = `flex ${isUser ? 'justify-end' : 'items-start gap-2'}`;
 
-        // bubble
         const bubble = document.createElement('div');
         bubble.className = `${isUser
             ? 'bg-teal-500 text-white'
@@ -102,11 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = messageInput.value.trim();
         if (!text) return;
 
-        // Người dùng
         addMessage(`<p>${text}</p>`, true);
         messageInput.value = '';
 
-        // Loader
         const loader = document.createElement('div');
         loader.className = 'flex items-start gap-2 loader';
         loader.innerHTML =
@@ -115,20 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
         chatContainer.appendChild(loader);
         chatContainer.scrollTop = chatContainer.scrollHeight;
 
-        // Gọi API
         fetch('/chatbot/chat', {
-            method : 'POST',
+            method: 'POST',
             headers: {
-                'Content-Type' : 'application/json',
-                'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').content
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             },
-            body   : JSON.stringify({message: text})
+            credentials: 'include',
+            body: JSON.stringify({ message: text })
         })
         .then(r => r.json())
         .then(d => {
             loader.remove();
             if (d.status === 'success') {
-                /* Ở đây bot được phép trả về HTML có xuống hàng <br>, tiêu đề <h6>, v‑v */
                 addMessage(d.response);
             } else {
                 addMessage(`<p>⚠️ Xin lỗi, tôi đang gặp lỗi kỹ thuật:<br>${d.message}</p>`);
@@ -151,8 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch('/chatbot/setup', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document
-                        .querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             })
             .then(response => response.json())
@@ -168,7 +168,38 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    function loadChatHistory() {
+        fetch('/chatbot/chat/history', {
+            credentials: 'include'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'success' && Array.isArray(data.history)) {
+                chatContainer.innerHTML = '';
+
+                chatContainer.insertAdjacentHTML('beforeend', `
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-robot text-emerald-600 mt-1"></i>
+                        <div class="bg-emerald-100 text-gray-800 rounded-lg px-3 py-2 text-sm leading-relaxed">
+                            <h6 class="font-semibold mb-1">👋 Xin chào!</h6>
+                            <p>Tôi là <strong>Bot Tư Vấn Tâm Lý</strong>.<br>
+                            Bạn đang lo lắng điều gì? Hãy chia sẻ nhé!</p>
+                        </div>
+                    </div>
+                `);
+
+                data.history.forEach(item => {
+                    addMessage(`<p>${item.message}</p>`, item.role === 'user');
+                });
+            }
+        })
+        .catch(err => {
+            console.error('❌ Lỗi khi load lịch sử chat:', err);
+        });
+    }
 });
+
 </script>
 @endpush
 @endsection
