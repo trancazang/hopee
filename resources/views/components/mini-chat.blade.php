@@ -12,7 +12,7 @@
         {{-- Header --}}
         <div class="flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-500 px-4 py-3 text-white">
             <h5 class="font-semibold flex items-center gap-2">
-                <i class="fas fa-robot text-xl"></i> Tư Vấn Tâm Lý
+                <i class="fas fa-robot text-xl"></i>Chú cún tên Boo
             </h5>
             @if(optional(auth()->user())->role && in_array(auth()->user()->role, ['moderator','admin']))
             <button id="setupBtn"
