@@ -141,3 +141,14 @@ Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index
 Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
 Route::post('/chatbot/setup', [ChatbotController::class, 'setup'])->name('chatbot.setup');
 require __DIR__.'/auth.php';
+Route::post('/upload-image', function (Request $request) {
+    if ($request->hasFile('upload')) {
+        $path = $request->file('upload')->store('uploads', 'public');
+        return response()->json([
+            'url' => asset('storage/' . $path)
+        ]);
+    }
+    return response()->json(['error' => 'No file uploaded'], 400);
+});
+Route::get('/admin/statistics', [\App\Http\Controllers\Admin\DashboardController::class, 'getStats']);
+

@@ -191,6 +191,8 @@
             });
         });
         </script>
+          @stack('after_scripts')
+
     </body>
 </html>
 

@@ -14,7 +14,7 @@
         {{-- Header --}}
         <div class="flex items-center justify-between bg-gradient-to-r from-emerald-600 to-teal-500 px-4 py-3 text-white">
             <h5 class="font-semibold flex items-center gap-2">
-                <i class="fas fa-robot text-xl"></i> Tư Vấn Tâm Lý
+                <i class="fas fa-robot text-xl"></i> Chú cún tên Boo
             </h5>
             @if(optional(auth()->user())->role && in_array(auth()->user()->role, ['moderator','admin']))
             <button id="setupBtn"
@@ -37,7 +37,7 @@
                 <i class="fas fa-robot text-emerald-600 mt-1"></i>
                 <div class="bg-emerald-100 text-gray-800 rounded-lg px-3 py-2 text-sm leading-relaxed">
                     <h6 class="font-semibold mb-1">👋 Xin chào!</h6>
-                    <p>Tôi là <strong>Bot Tư Vấn Tâm Lý</strong>.<br>
+                    <p>Tôi là <strong>Boo, tôi có thể Tư Vấn Tâm Lý</strong>.<br>
                        Bạn đang lo lắng điều gì? Hãy chia sẻ nhé!</p>
                 </div>
             </div>
