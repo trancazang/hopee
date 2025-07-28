@@ -168,16 +168,17 @@
             </ul>
         </div>
         <div class="col-md-4">
-            <h5>👨‍🏫 Người dùng ảnh hưởng nhất</h5>
+            <h5>👨‍🏫 Chuyên gia có sức ảnh hưởng nhất</h5>
             <ul class="list-group shadow-sm">
                 @foreach ($topUsers as $user)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ $user['name'] }}
-                        <span class="badge bg-success rounded-pill">{{ $user['score'] }} điểm</span>
+                        <span class="badge bg-success rounded-pill">{{ $user['upvotes'] }} điểm</span>
                     </li>
                 @endforeach
             </ul>
         </div>
+        
     </div>
 </div>
 @endsection

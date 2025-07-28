@@ -58,7 +58,7 @@
 
             <!-- Auth buttons -->
             @auth
-                @if(in_array(auth()->user()->role, ['admin']))
+                @if(in_array(auth()->user()->role, ['admin','moderator']))
                     <a href="{{ route('backpack.dashboard') }}" class="hover:underline">📊 Dashboard</a>
                 @endif
                 <a href="{{ route('profile') }}" class="hover:underline">👤 Hồ sơ</a>

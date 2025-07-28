@@ -101,7 +101,7 @@ class DashboardController extends Controller
             'posts'   => $userStat->post_count,
         ];
     });
-    // Số bài viết theo chủ đề
+    //  chủ đề có nhiều bài viết nhất
     $postsByThread = DB::table('forum_threads')
         ->joinSub(clone $postBase, 'filtered_posts', function ($join) {
             $join->on('forum_threads.id', '=', 'filtered_posts.thread_id');
