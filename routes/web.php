@@ -150,5 +150,4 @@ Route::post('/upload-image', function (Request $request) {
     }
     return response()->json(['error' => 'No file uploaded'], 400);
 });
-Route::get('/admin/statistics', [\App\Http\Controllers\Admin\DashboardController::class, 'getStats']);
 

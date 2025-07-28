@@ -179,18 +179,6 @@
             </ul>
         </div>
     </div>
-
-    <div class="mt-5">
-        <h5>🔍 Từ khoá tâm lý phổ biến</h5>
-        <ul class="list-group shadow-sm">
-            @foreach ($topKeywordsRaw as $word => $count)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ $word }}
-                    <span class="badge bg-secondary rounded-pill">{{ $count }} lần</span>
-                </li>
-            @endforeach
-        </ul>
-    </div>
 </div>
 @endsection
 
