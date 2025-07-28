@@ -31,8 +31,19 @@ class AdviceRequestForm extends Component
 
     public function mount()
     {
-        $this->moderators = User::where('role', 'moderator')->get();
-        logger('\ud83d\udce5 Mount: Moderators loaded', $this->moderators->pluck('name', 'id')->toArray());
+        $this->moderators = User::where('role', 'moderator')->get()->map(function ($mod) {
+            $mod->avg_rating = \DB::table('advice_ratings')
+                ->join('advice_requests', 'advice_ratings.advice_request_id', '=', 'advice_requests.id')
+                ->where('advice_requests.moderator_id', $mod->id)
+                ->avg('advice_ratings.rating') ?? 0;
+                $ratings = \DB::table('advice_ratings')
+                ->join('advice_requests', 'advice_ratings.advice_request_id', '=', 'advice_requests.id')
+                ->where('advice_requests.moderator_id', $mod->id);
+            
+            $mod->avg_rating = $ratings->avg('advice_ratings.rating') ?? 0;
+            $mod->total_ratings = $ratings->count();
+            return $mod;
+        });
     }
 
     public function selectModerator($id)

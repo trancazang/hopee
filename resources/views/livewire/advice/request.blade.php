@@ -44,8 +44,12 @@
                                 : 'bg-white text-pink-700 hover:bg-pink-100 border-pink-300' }}"
                     >
                         {{ $mod->name }}
+                        <div class="text-sm text-gray-500">
+                            ⭐ {{ number_format($mod->avg_rating, 1) }}/5 ({{ $mod->total_ratings }} lượt)
+                        </div>
                     </button>
                 @endforeach
+
             </div>
         </div>
 
