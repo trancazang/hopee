@@ -29,6 +29,8 @@ class ForumthreadsCrudController extends CrudController
         CRUD::setModel(\App\Models\Forumthreads::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/forumthreads');
         CRUD::setEntityNameStrings('forumthreads', 'forumthreads');
+        $this->crud->denyAccess(['create']);
+
     }
 
     /**

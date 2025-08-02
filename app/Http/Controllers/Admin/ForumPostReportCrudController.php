@@ -31,6 +31,8 @@ class ForumPostReportCrudController extends CrudController
         CRUD::setModel(\App\Models\ForumPostReport::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/forum-post-report');
         CRUD::setEntityNameStrings('báo cáo', 'các báo cáo');
+        $this->crud->denyAccess(['create']);
+
     }
 
     /**

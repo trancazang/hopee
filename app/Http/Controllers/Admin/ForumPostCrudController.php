@@ -29,6 +29,7 @@ class ForumPostCrudController extends CrudController
         CRUD::setModel(\App\Models\ForumPost::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/forum-post');
         CRUD::setEntityNameStrings('forum post', 'forum posts');
+        $this->crud->denyAccess(['create']);
     }
 
     /**

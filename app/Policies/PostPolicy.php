@@ -13,7 +13,7 @@ class PostPolicy extends Base
 {
     public function edit($user, Post $post): bool
     {
-        return $user->id === $post->author_id || in_array($user->role, ['admin', 'moderator']);
+        return $user->id === $post->author_id;
     }
 
     public function delete($user, Post $post): bool

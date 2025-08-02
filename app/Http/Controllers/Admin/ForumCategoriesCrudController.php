@@ -31,7 +31,8 @@ class ForumCategoriesCrudController extends CrudController
         CRUD::setModel(ForumCategories::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/forum-categories');
         CRUD::setEntityNameStrings('forum categories', 'forum categories');
-        
+        $this->crud->denyAccess(['create']);
+
     }
 
     /**
