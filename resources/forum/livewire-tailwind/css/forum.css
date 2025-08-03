@@ -80,4 +80,11 @@
             @apply text-slate-300 hover:text-white;
         }
     }
+    .prose img {
+        max-width: 200px;   /* thay 400px bằng giá trị bạn muốn */
+        width: auto;
+        height: auto;
+        display: block;
+        margin-left: 1em auto;   /* căn tráp, có khoảng cách trên dưới */
+      }
 }

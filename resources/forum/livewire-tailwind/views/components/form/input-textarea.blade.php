@@ -33,10 +33,10 @@
             let isInitialized = false;
             
             // Đợi Livewire load xong
-            if (window.Livewire) {
-                initCKEditor();
+            if (typeof Livewire !== 'undefined') {
+            initCKEditor();
             } else {
-                document.addEventListener("livewire:init", initCKEditor);
+            document.addEventListener('livewire:load', initCKEditor);
             }
 
             function initCKEditor() {
@@ -44,7 +44,46 @@
                 if (el && !el.dataset.ckeditorLoaded && !isInitialized) {
                     console.log('Initializing CKEditor for:', "{{ $id }}");
                     isInitialized = true;
-                    
+                    class MyUploadAdapter {
+                        constructor( loader ) {
+                            this.loader = loader;
+                        }
+
+                        // Thực hiện upload, trả về Promise.resolve({ default: imageUrl })
+                        upload() {
+                            return this.loader.file.then( file => new Promise( ( resolve, reject ) => {
+                            const data = new FormData();
+                            data.append( 'upload', file );
+
+                            fetch( "{{ route('ckeditor.upload') }}", {
+                                method: 'POST',
+                                headers: {
+                                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                                },
+                                body: data
+                            } )
+                            .then( res => res.json() )
+                            .then( json => {
+                                // JSON trả về { url: '/storage/uploads/abc.jpg' }
+                                resolve( { default: json.url } );
+                            } )
+                            .catch( err => {
+                                console.error('Upload failed:', err);
+                                reject(err);
+                            });
+                            } ) );
+                        }
+
+                        // Optional: abort nếu cần
+                        abort() {
+                            // Reject promise ở trên nếu cần
+                        }
+                    }
+                    function MyUploadAdapterPlugin( editor ) {
+                        editor.plugins.get( 'FileRepository' )
+                            .createUploadAdapter = loader => new MyUploadAdapter( loader );
+                    }
+
                     ClassicEditor.create(el, {
                         toolbar: [
                             'heading',
@@ -63,8 +102,9 @@
                             'insertTable',
                             'mediaEmbed',
                             'undo',
-                            'redo'
+                            'redo',
                         ],
+                        extraPlugins: [ MyUploadAdapterPlugin ],
                         heading: {
                             options: [
                                 { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
@@ -199,10 +239,13 @@
         }
         
         // Hook xử lý mọi thay đổi từ Livewire
-        Livewire.hook('message.processed', (message, component) => {
-            setTimeout(() => {
-                setupTextareaObserver();
-            }, 100);
+        document.addEventListener('livewire:load', () => {
+            if (window.Livewire && typeof window.Livewire.hook === 'function') {
+                window.Livewire.hook('message.processed', () => {
+                    setTimeout(setupTextareaObserver, 100);
+                });
+            }
         });
     </script>
+
 @endif

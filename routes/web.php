@@ -13,6 +13,7 @@ use App\Livewire\{
     AdviceRequestForm, ScheduleManager, AdviceManageComponent, AdviceRateComponent, AdviceHistoryComponent, AdviceModeratorCalendar
 };
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\CkeditorController;
 
 Route::middleware(['auth'])->group(function () {
     // người dùng đăng ký
@@ -151,3 +152,5 @@ Route::post('/upload-image', function (Request $request) {
     return response()->json(['error' => 'No file uploaded'], 400);
 });
 
+Route::post('/ckeditor/upload', [CkeditorController::class, 'upload'])
+     ->name('ckeditor.upload');
