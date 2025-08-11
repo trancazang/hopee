@@ -89,7 +89,7 @@
    
         
         <div class="bg-blue shadow-md border-b border-slate-300 dark:bg-slate-800 dark:border-slate-700 dark:shadow-none" @click.outside="closeMenu">
-            <div x-data="{ sidebarOpen: true }" class="max-w-7xl mx-auto px-4 py-6">
+            <div x-data="{ sidebarOpen: false }" class="max-w-7xl mx-auto px-4 py-6 sticky">
                 <!-- Nút toggle sidebar -->
                 <div class="mb-4">
                     <button

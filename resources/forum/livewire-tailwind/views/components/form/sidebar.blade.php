@@ -26,15 +26,15 @@
             <nav class="space-y-1 text-slate-700 dark:text-slate-200 text-[15px] font-medium">
                 <a href="{{ route('tests.index') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700">
-                    📝 Test
+                     Test
                 </a>
                 <a href="{{ route('chat.show') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700">
-                    📩 Tin nhắn
+                    Tin nhắn
                 </a>
                 <a href="{{ route('forum.category.index') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700">
-                    💬 Forum
+                    Forum
                 </a>
             </nav>
 
@@ -43,7 +43,7 @@
             <div x-data="{ open: false }" class="mt-5 space-y-1">
                 <button @click="open = !open"
                     class="flex w-full justify-between items-center px-3 py-2 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700">
-                    <span class="flex items-center gap-2">🧠 Tư vấn</span>
+                    <span class="flex items-center gap-2">Tư vấn</span>
                     <svg class="w-4 h-4 transform transition-transform" :class="{ 'rotate-180': open }"
                         viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd"

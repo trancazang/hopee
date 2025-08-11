@@ -26,9 +26,9 @@
 
         <!-- Menu items -->
         <div class="flex items-center space-x-6 text-sm relative">
-            <a href="{{ route('tests.index') }}" class="hover:underline">📝 Test</a>
-            <a href="{{ route('chat.show') }}" class="hover:underline">📩 Tin nhắn</a>
-            <a href="{{ route('forum.category.index') }}" class="hover:underline">💬 Forum</a>
+            <a href="{{ route('tests.index') }}" class="hover:underline">Test</a>
+            <a href="{{ route('chat.show') }}" class="hover:underline">Tin nhắn</a>
+            <a href="{{ route('forum.category.index') }}" class="hover:underline"> Forum</a>
 
             @auth
                 <!-- Trigger + Dropdown -->
@@ -59,16 +59,16 @@
             <!-- Auth buttons -->
             @auth
                 @if(in_array(auth()->user()->role, ['admin','moderator']))
-                    <a href="{{ route('backpack.dashboard') }}" class="hover:underline">📊 Dashboard</a>
+                    <a href="{{ route('backpack.dashboard') }}" class="hover:underline">Dashboard</a>
                 @endif
-                <a href="{{ route('profile') }}" class="hover:underline">👤 Hồ sơ</a>
+                <a href="{{ route('profile') }}" class="hover:underline"> Hồ sơ</a>
                 <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" class="hover:underline">Đăng xuất</button>
                 </form>
             @else
-                <a href="{{ route('login') }}" class="hover:underline">🔑 Đăng nhập</a>
-                <a href="{{ route('register') }}" class="hover:underline">🆕 Đăng ký</a>
+                <a href="{{ route('login') }}" class="hover:underline">Đăng nhập</a>
+                <a href="{{ route('register') }}" class="hover:underline">Đăng ký</a>
             @endauth
         </div>
     </div>
@@ -106,7 +106,7 @@
             <h3 class="text-3xl font-bold text-center text-white mb-12" data-aos="fade-up">Lợi ích khi tham gia</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div class="bg-[#fef6e4] text-[#001858] p-6 rounded-lg shadow" data-aos="fade-up" data-aos-delay="100">
-                    <h4 class="text-xl font-semibold mb-2">📊 Đánh giá tinh thần</h4>
+                    <h4 class="text-xl font-semibold mb-2">Đánh giá tinh thần</h4>
                     <p>Tự test trầm cảm, lo âu, căng thẳng miễn phí.</p>
                 </div>
                 <div class="bg-[#fef6e4] text-[#001858] p-6 rounded-lg shadow" data-aos="fade-up" data-aos-delay="200">
@@ -135,7 +135,6 @@
     <script>
         AOS.init({ once: true });
     </script>
-        <x-mini-chat />
 
         {{-- Các stack để mini‑chat tự đổ CSS/JS (nếu trong component có @push) --}}
         @stack('styles')

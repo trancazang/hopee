@@ -28,9 +28,9 @@
     
             <!-- Menu items -->
             <div class="flex items-center space-x-6 text-sm relative">
-                <a href="{{ route('tests.index') }}" class="hover:underline">📝 Test</a>
-                <a href="{{ route('chat.show') }}" class="hover:underline">📩 Tin nhắn</a>
-                <a href="{{ route('forum.category.index') }}" class="hover:underline">💬 Forum</a>
+                <a href="{{ route('tests.index') }}" class="hover:underline">Test</a>
+                <a href="{{ route('chat.show') }}" class="hover:underline">Tin nhắn</a>
+                <a href="{{ route('forum.category.index') }}" class="hover:underline">Forum</a>
     
                 @auth
                     <!-- Trigger + Dropdown -->
@@ -60,17 +60,17 @@
     
                 <!-- Auth buttons -->
                 @auth
-                    @if(in_array(auth()->user()->role, ['admin']))
-                        <a href="{{ route('backpack.dashboard') }}" class="hover:underline">📊 Dashboard</a>
-                    @endif
-                    <a href="{{ route('profile') }}" class="hover:underline">👤 Hồ sơ</a>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="hover:underline">Đăng xuất</button>
-                    </form>
+                @if(in_array(auth()->user()->role, ['admin','moderator']))
+                    <a href="{{ route('backpack.dashboard') }}" class="hover:underline">Dashboard</a>
+                @endif
+                <a href="{{ route('profile') }}" class="hover:underline"> Hồ sơ</a>
+                <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="hover:underline">Đăng xuất</button>
+                </form>
                 @else
-                    <a href="{{ route('login') }}" class="hover:underline">🔑 Đăng nhập</a>
-                    <a href="{{ route('register') }}" class="hover:underline">🆕 Đăng ký</a>
+                    <a href="{{ route('login') }}" class="hover:underline">Đăng nhập</a>
+                    <a href="{{ route('register') }}" class="hover:underline">Đăng ký</a>
                 @endauth
             </div>
         </div>
