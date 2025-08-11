@@ -16,13 +16,12 @@ class DashboardController extends Controller
 {
    
     public function index(Request $request)
-{
+{   $allPosts = DB::table('forum_posts')->whereNotNull('forum_posts.created_at');
+    $postBase = (clone $allPosts);
+    $voteBase = DB::table('forum_post_votes')->whereNotNull('forum_post_votes.created_at');
     $month = $request->input('month');
     $year = $request->input('year');
 
-    // Gốc query để reuse
-    $postBase = DB::table('forum_posts')->whereNotNull('forum_posts.created_at');
-    $voteBase = DB::table('forum_post_votes')->whereNotNull('forum_post_votes.created_at');
     
 
     if ($month) {
@@ -37,12 +36,12 @@ class DashboardController extends Controller
 
     // Tổng số
     $userCount = User::count();
-    $postCount = (clone $postBase)->count();
+    $postCount = DB::table('forum_posts')->count();
     $threadCount = DB::table('forum_threads')->count();
 
     // Bài viết theo tháng (đủ 12 tháng)
     $postsByMonth = array_fill(1, 12, 0);
-    $monthlyData = (clone $postBase)
+    $monthlyData = (clone $allPosts)
         ->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
         ->groupByRaw('MONTH(created_at)')
         ->pluck('total', 'month')
@@ -50,7 +49,7 @@ class DashboardController extends Controller
 
     foreach ($monthlyData as $m => $count) {
         $postsByMonth[(int)$m] = $count;
-    }
+    }   
 
     // Chủ đề nổi bật
     $topThreads = (clone $postBase)
@@ -80,8 +79,8 @@ class DashboardController extends Controller
         ->limit(5)
         ->get();
 
-    // Người dùng ảnh hưởng (tổng điểm vote trên bài viết do họ viết)
-    $topUsers = (clone $postBase)
+    // Chuyên gia có ảnh hưởng (tổng điểm vote trên bài viết do họ viết)
+    $topMod = (clone $postBase)
     ->join('forum_post_votes', 'forum_posts.id', '=', 'forum_post_votes.post_id')
     ->join('users', 'forum_posts.author_id', '=', 'users.id')
     ->where('users.role', 'moderator') // chỉ lấy moderator
@@ -99,6 +98,28 @@ class DashboardController extends Controller
             'name' => $user?->name ?? 'Không rõ',
             'upvotes' => $userStat->upvote_count,
             'posts'   => $userStat->post_count,
+        ];
+    });
+    // Top user có ảnh hưởng (tổng điểm vote trên bài viết do họ viết)
+    $topUsers = (clone $postBase)
+    ->join('forum_post_votes', 'forum_posts.id', '=', 'forum_post_votes.post_id')
+    ->select('forum_posts.author_id', DB::raw("
+        SUM(
+            CASE WHEN forum_post_votes.vote_type = 'upvote' THEN 1
+                 WHEN forum_post_votes.vote_type = 'downvote' THEN -1
+                 ELSE 0
+            END
+        ) as total_score
+    "))
+    ->groupBy('forum_posts.author_id')
+    ->orderByDesc('total_score')
+    ->limit(5)
+    ->get()
+    ->map(function ($stat) {
+        $user = User::find($stat->author_id);
+        return [
+            'name'  => $user?->name ?? 'Không rõ',
+            'score' => $stat->total_score,
         ];
     });
     //  chủ đề có nhiều bài viết nhất
@@ -196,7 +217,8 @@ class DashboardController extends Controller
         'newUsersList',
         'newPostsThisWeek',
         'month',
-        'year'
+        'year',
+        'topMod'
     ));
     
 }

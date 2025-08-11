@@ -52,12 +52,12 @@
                     </svg>
                 </button>
                 <div x-show="open" x-transition x-cloak class="pl-6 mt-2 space-y-1 text-sm">
-                    <a href="{{ route('advice.request') }}" class="block hover:underline">📥 Đăng ký</a>
-                    <a href="{{ route('advice.history') }}" class="block hover:underline">🕘 Lịch sử</a>
+                    <a href="{{ route('advice.request') }}" class="block hover:underline">Đăng ký</a>
+                    <a href="{{ route('advice.history') }}" class="block hover:underline">Lịch sử</a>
                     @if(in_array(auth()->user()->role, ['moderator', 'admin']))
-                        <a href="{{ route('advice.manage') }}" class="block hover:underline">📂 Quản lý</a>
-                        <a href="{{ route('advice.schedule') }}" class="block hover:underline">🧾 Tiếp nhận</a>
-                        <a href="{{ route('advice.calendar') }}" class="block hover:underline">📅 Lịch</a>
+                        <a href="{{ route('advice.manage') }}" class="block hover:underline">Quản lý</a>
+                        <a href="{{ route('advice.schedule') }}" class="block hover:underline">Tiếp nhận</a>
+                        <a href="{{ route('advice.calendar') }}" class="block hover:underline">Lịch</a>
                     @endif
                 </div>
             </div>
@@ -69,28 +69,28 @@
                     @if(auth()->user()->role === 'admin')
                         <a href="{{ route('backpack.dashboard') }}"
                             class="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 dark:hover:bg-slate-700">
-                            📊 Dashboard
+                            Dashboard
                         </a>
                     @endif
                     <a href="{{ route('profile') }}"
                         class="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 dark:hover:bg-slate-700">
-                        👤 Hồ sơ
+                        Hồ sơ
                     </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button
                             class="w-full text-left flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 dark:hover:bg-slate-700">
-                            🚪 Đăng xuất
+                            Đăng xuất
                         </button>
                     </form>
                 @else
                     <a href="{{ route('login') }}"
                         class="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 dark:hover:bg-slate-700">
-                        🔑 Đăng nhập
+                        Đăng nhập
                     </a>
                     <a href="{{ route('register') }}"
                         class="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 dark:hover:bg-slate-700">
-                        🆕 Đăng ký
+                        Đăng ký
                     </a>
                 @endauth
             </div>

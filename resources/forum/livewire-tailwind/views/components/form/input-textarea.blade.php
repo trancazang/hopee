@@ -183,60 +183,64 @@
 
         // MutationObserver để theo dõi thay đổi textarea
         function setupTextareaObserver() {
-            const textarea = document.getElementById("{{ $id }}");
-            if (textarea && textarea._ckeditorInstance) {
-                // Lưu giá trị trước đó
-                let previousValue = textarea.value;
-                
-                // Sử dụng MutationObserver để theo dõi thay đổi
-                const observer = new MutationObserver(() => {
-                    const currentValue = textarea.value;
-                    const editorData = textarea._ckeditorInstance.getData();
-                    
-                    // Nếu textarea bị reset về rỗng và CKEditor vẫn có nội dung
-                    if (currentValue === '' && editorData !== '') {
-                        textarea._ckeditorInstance.setData('');
-                        console.log('✅ CKEditor reset - textarea cleared');
-                    }
-                    // Nếu textarea có giá trị khác với CKEditor
-                    else if (currentValue !== editorData) {
-                        textarea._ckeditorInstance.setData(currentValue);
-                        console.log('✅ CKEditor synced with textarea');
-                    }
-                    
-                    previousValue = currentValue;
-                });
-                
-                // Theo dõi thay đổi thuộc tính value
-                observer.observe(textarea, {
-                    attributes: true,
-                    attributeFilter: ['value']
-                });
-                
-                // Cũng theo dõi thay đổi trực tiếp trên value
-                let checkInterval = setInterval(() => {
-                    if (!document.getElementById("{{ $id }}")) {
-                        clearInterval(checkInterval);
-                        return;
-                    }
-                    
-                    const currentValue = textarea.value;
-                    if (currentValue !== previousValue) {
-                        const editorData = textarea._ckeditorInstance.getData();
-                        
-                        if (currentValue === '' && editorData !== '') {
-                            textarea._ckeditorInstance.setData('');
-                            console.log('✅ CKEditor reset - interval check');
-                        } else if (currentValue !== editorData) {
-                            textarea._ckeditorInstance.setData(currentValue);
-                            console.log('✅ CKEditor synced - interval check');
-                        }
-                        
-                        previousValue = currentValue;
-                    }
-                }, 500);
+        const textarea = document.getElementById("{{ $id }}");
+        if (!textarea || !textarea._ckeditorInstance) return;
+
+        // Ngăn setup nhiều lần
+        if (textarea._observerSetup) return;
+        textarea._observerSetup = true;
+
+        // Helper: editor có đang focus không?
+        const isEdFocused = () => {
+            try { return textarea._ckeditorInstance.editing.view.document.isFocused; }
+            catch { return false; }
+        };
+
+        let previousValue = textarea.value;
+
+        const observer = new MutationObserver(() => {
+            const currentValue = textarea.value;
+            const editorData  = textarea._ckeditorInstance.getData();
+
+            // ✦ KHÔNG ép setData khi editor đang focus (đang gõ) → tránh nhảy caret
+            if (isEdFocused()) { previousValue = currentValue; return; }
+
+            if (currentValue === '' && editorData !== '') {
+                textarea._ckeditorInstance.setData(''); // cho phép reset rỗng
+                // console.log('✅ CKEditor reset - observer');
+            } else if (currentValue !== editorData) {
+                textarea._ckeditorInstance.setData(currentValue); // sync chỉ khi KHÔNG focus
+                // console.log('✅ CKEditor synced - observer');
             }
-        }
+
+            previousValue = currentValue;
+        });
+
+        observer.observe(textarea, { attributes: true, attributeFilter: ['value'] });
+
+        // Interval check giữ nguyên nhưng thêm chặn đang focus
+        let checkInterval = setInterval(() => {
+            const el = document.getElementById("{{ $id }}");
+            if (!el) { clearInterval(checkInterval); return; }
+
+            const currentValue = el.value;
+            if (currentValue === previousValue) return;
+
+            const editorData = el._ckeditorInstance.getData();
+
+            if (isEdFocused()) { previousValue = currentValue; return; } // ✦ chặn khi đang gõ
+
+            if (currentValue === '' && editorData !== '') {
+                el._ckeditorInstance.setData('');
+                // console.log('✅ CKEditor reset - interval check');
+            } else if (currentValue !== editorData) {
+                el._ckeditorInstance.setData(currentValue);
+                // console.log('✅ CKEditor synced - interval check');
+            }
+
+            previousValue = currentValue;
+        }, 500);
+    }
         
         // Hook xử lý mọi thay đổi từ Livewire
         document.addEventListener('livewire:load', () => {

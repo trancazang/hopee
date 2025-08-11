@@ -82,29 +82,6 @@
             <button type="submit" class="btn btn-primary">Lọc</button>
         </div>
     </form>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-6">
-            <h5>📅 Bài viết theo tháng</h5>
-            <div class="card shadow-sm p-3"><canvas id="postsChart" height="230"></canvas></div>
-        </div>
-        <div class="col-md-6">
-            <h5>📆 Bài viết theo tuần</h5>
-            <div class="card shadow-sm p-3"><canvas id="postsChartWeek" height="230"></canvas></div>
-        </div>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-6">
-            <h5>👍 Lượt vote theo người dùng</h5>
-            <div class="card shadow-sm p-3"><canvas id="votesChart" height="230"></canvas></div>
-        </div>
-        <div class="col-md-6">
-            <h5>🧵 Bài viết theo chủ đề</h5>
-            <div class="card shadow-sm p-3"><canvas id="threadsChart" height="230"></canvas></div>
-        </div>
-    </div>
-
     <div class="row g-4 mb-4">
         <div class="col-md-6">
             <h5>☁️ Từ khoá phổ biến (Word Cloud)</h5>
@@ -142,6 +119,29 @@
             </div>
         </div>
     </div>
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <h5>📅 Bài viết theo tháng</h5>
+            <div class="card shadow-sm p-3"><canvas id="postsChart" height="230"></canvas></div>
+        </div>
+        <div class="col-md-6">
+            <h5>📆 Bài viết theo tuần</h5>
+            <div class="card shadow-sm p-3"><canvas id="postsChartWeek" height="230"></canvas></div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <h5>Người dùng được hưởng ứng nhất</h5>
+            <div class="card shadow-sm p-3"><canvas id="votesChart" height="230"></canvas></div>
+        </div>
+        <div class="col-md-6">
+            <h5>🧵 Chủ đề có nhiều thảo luận</h5>
+            <div class="card shadow-sm p-3"><canvas id="threadsChart" height="230"></canvas></div>
+        </div>
+    </div>
+
+    
 
     {{-- Danh sách các thống kê chi tiết --}}
     <div class="row g-4">
@@ -170,7 +170,7 @@
         <div class="col-md-4">
             <h5>👨‍🏫 Chuyên gia có sức ảnh hưởng nhất</h5>
             <ul class="list-group shadow-sm">
-                @foreach ($topUsers as $user)
+                @foreach ($topMod as $user)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ $user['name'] }}
                         <span class="badge bg-success rounded-pill">{{ $user['upvotes'] }} điểm</span>
